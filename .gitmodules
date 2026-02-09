@@ -4,3 +4,6 @@
 [submodule "deps/FlameGraph"]
 	path = deps/FlameGraph
 	url = https://github.com/brendangregg/FlameGraph
+[submodule "deps/inferno"]
+	path = deps/inferno
+	url = https://github.com/open-s4c/inferno
