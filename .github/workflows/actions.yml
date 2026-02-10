@@ -21,6 +21,23 @@ jobs:
       - name: Run Tests
         run: ctest --test-dir build --output-on-failure
 
+  Run-bm-generator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: install pre-requisites
+        run: sudo apt-get install -y libhiredis-dev
+      - name: Test Builtin Benchmarks
+        uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      - name: Test bm-generator
+        run: cd bm-generator/ && ./test.sh
+      - name: Build what bm-generator generated
+        run: cmake --build build -j
+      - name: Run
+        run: ctest --test-dir build --output-on-failure -R min_ls.*
+
   # Checks if cmake and C files are properly formatted
   Check-Format:
     runs-on: ubuntu-22.04
