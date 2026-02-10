@@ -14,7 +14,7 @@ message(STATUS "Fetching syzkaller ...")
 
 FetchContent_Declare(
   syzkaller
-  GIT_REPOSITORY csb-
+  GIT_REPOSITORY https://github.com/open-s4c/syzkaller.git
   GIT_TAG s4c/csb-gen
   GIT_PROGRESS TRUE
 )
