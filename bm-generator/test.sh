@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 set -e
 
-STRACE_LOG="ls.log"
+STRACE_LOG="ls_strace.log"
 APP="ls"
 strace -o ${STRACE_LOG} -a 1 -s 65500 -v -xx -f -Xraw --raw=wait4 ${APP}
 
