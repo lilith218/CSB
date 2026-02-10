@@ -17,8 +17,7 @@ DIR_TARGETS="../bench/targets/syz"
 
 if [ -d "${DIR_TARGETS}" ]; then
   echo "`readlink -e ${DIR_TARGETS}` exist!"
-  echo "Using this directory might lead to unexpected results, please (re)move it before header generation."
-  exit 1
+  echo "[WARNING] Using this directory might lead to unexpected results, please (re)move it before header generation."
 fi
 
 mkdir -p "${DIR_TARGETS}"
