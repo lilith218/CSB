@@ -61,5 +61,5 @@ if [ ${CUR_MAJ} -eq ${GO_VER_REQ_MAJ} ]; then
     fi
 fi
 
-cmake -B build .
-make -B build -j ${JOBS}
+cmake -S. -Bbuild
+cmake --build build
