@@ -14,8 +14,8 @@ message(STATUS "Fetching syzkaller ...")
 
 FetchContent_Declare(
   syzkaller
-  GIT_REPOSITORY https://github.com/open-s4c/syzkaller.git
-  GIT_TAG 0844246c0440954e71f6ae784ae2d97a5588c08d
+  GIT_REPOSITORY csb-
+  GIT_TAG s4c/csb-gen
   GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(syzkaller)
