@@ -5,8 +5,7 @@ set -e
 
 STRACE_LOG="ls_strace.log"
 APP="ls"
-strace -o ${STRACE_LOG} -a 1 -s 65500 -v -xx -f -Xraw --raw=wait4 ${APP}
-
+FILE_LOG=${STRACE_LOG} helper/collect_strace.sh ${APP}
 ./00_init.sh
 ./01_build.sh
 ./02_parse.sh ${STRACE_LOG}

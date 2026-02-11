@@ -2,16 +2,12 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+BUILD_DIR="build"
+DIR_FILE="${BUILD_DIR}/syzkaller-path.txt"
 
-DIR_BUILD=`find . -type d -name CMakeFiles |        \
-     awk 'BEGIN { OFS="\t" }{print length,$0}'  |   \
-     sort -n |                                      \
-     head -1 |                                      \
-     cut -f 2 |                                     \
-     sed 's/CMakeFiles$//'`
-
-SYZ_SRC="${DIR_BUILD}/_deps/syzkaller-src"
-
-if [ -d "${SYZ_SRC}" ]; then
-     echo "${SYZ_SRC}"
+if [ -f "${DIR_FILE}" ]; then
+     SYZKALLER_DIR=$(cat "${DIR_FILE}")
+     echo $SYZKALLER_DIR
 fi
+
+

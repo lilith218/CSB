@@ -60,6 +60,3 @@ if [ ${CUR_MAJ} -eq ${GO_VER_REQ_MAJ} ]; then
         exit 1
     fi
 fi
-
-cmake -S. -Bbuild
-cmake --build build

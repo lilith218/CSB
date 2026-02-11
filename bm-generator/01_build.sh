@@ -22,19 +22,8 @@ if [ ! -d "${DIR_SYZ_SRC}" ]; then
  DIR_SYZ_SRC=$(${SCRIPT_SYZ_SRC})
   if [ ! -d "${DIR_SYZ_SRC}" ]; then
     echo "Failed setting up syzkaller sources."
-    echo "If the syzkaller source dir is not beneath $(pwd), then run this script as:"
+    echo "If the syzkaller source dir is not beneath $(pwd)/build, then run this script as:"
     echo "  DIR_SYZ_SRC=</path/to/syzkaller/source> $0"
     exit 1
   fi
 fi
-
-cd "${DIR_SYZ_SRC}"
-
-TOOLS="trace2syz prog2c extraction"
-
-make
-#make generate_trace2syz
-
-for tool in ${TOOLS}; do
-    (cd tools/syz-${tool} && go build)
-done
