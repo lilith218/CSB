@@ -158,7 +158,7 @@ jobs:
         run: sudo chmod -R a+r results/
       - name: Upload results
         uses: actions/upload-artifact@v4
-        if: success()
+        if: always()
         with:
           name: results-${{ matrix.benchmark }}
           path: results/
