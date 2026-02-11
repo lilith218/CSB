@@ -16,8 +16,9 @@ SCRIPT_SYZ_SRC="helper/find_syzkaller_src.sh"
 
 if [ ! -d "${DIR_SYZ_SRC}" ]; then
   echo "syzkaller source dir not found. Running:"
-  echo "  cmake -B build ."
-  cmake -B build .
+  echo "  cmake -S. -Bbuild"
+  cmake -S. -Bbuild
+  cmake --build build
  DIR_SYZ_SRC=$(${SCRIPT_SYZ_SRC})
   if [ ! -d "${DIR_SYZ_SRC}" ]; then
     echo "Failed setting up syzkaller sources."
