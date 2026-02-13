@@ -5,6 +5,8 @@ include(FetchContent)
 
 message(STATUS "Fetching syzkaller ...")
 
+set(TARGET_NAME syzkaller)
+
 FetchContent_Declare(
   syzkaller
   GIT_REPOSITORY https://github.com/open-s4c/syzkaller.git
@@ -25,7 +27,7 @@ endif()
 message(STATUS "Go found at: ${GO_EXECUTABLE}")
 
 # build syzkaller
-add_custom_target(syzkaller ALL
+add_custom_target(${TARGET_NAME}
     COMMAND make
     WORKING_DIRECTORY ${syzkaller_SOURCE_DIR}
 )
@@ -36,8 +38,7 @@ set(TOOLS trace2syz prog2c extraction)
 # Build each tool
 foreach(TOOL IN ITEMS ${TOOLS})
     set(TOOL_NAME syz-${TOOL})
-    message(STATUS "Building syzkaller tool: ${TOOL_NAME}")
-    add_custom_target(${TOOL} ALL
+    add_custom_target(${TOOL} ${TARGET_NAME}
         COMMAND go build
         WORKING_DIRECTORY "${TOOLS_DIR}/${TOOL_NAME}"
     )
