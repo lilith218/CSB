@@ -11,11 +11,11 @@ add_custom_target(${SINGLE_BM_TARGET})
 # Find all single template files
 file(GLOB TEMPLATES *single*.in)
 # Collect all input headers
-file(GLOB HEADERS "${CMAKE_SOURCE_DIR}/../bench/targets/syz/*.h")
+file(GLOB HEADERS "${CMAKE_SOURCE_DIR}/bench/targets/syz/*.h")
 # Output dir for config files
-set(CONFIG_DIR "${CMAKE_SOURCE_DIR}/../config")
+set(CONFIG_DIR "${CMAKE_SOURCE_DIR}/config")
 # Output dir for header files
-set(HEADER_DIR "${CMAKE_SOURCE_DIR}/../bench/targets")
+set(HEADER_DIR "${CMAKE_SOURCE_DIR}/bench/targets")
 
 # For each header input we want to generate
 # a JSON config files and a matching header
