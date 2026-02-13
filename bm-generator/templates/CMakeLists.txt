@@ -86,4 +86,3 @@ add_custom_command(
     POST_BUILD
     COMMAND cmake --build "${CMAKE_BINARY_DIR}" --target clang-format-apply
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-

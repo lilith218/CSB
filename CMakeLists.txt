@@ -15,32 +15,33 @@ add_subdirectory(bm-generator)
 
 set(HELPERS ${CMAKE_SOURCE_DIR}/helpers)
 
-###########################################
+# ##############################################################################
 # Add license-check target
-###########################################
-add_custom_target(license-check
-                    COMMAND ${HELPERS}/license-check.sh
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-###########################################
+# ##############################################################################
+add_custom_target(
+    license-check
+    COMMAND ${HELPERS}/license-check.sh
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+# ##############################################################################
 # Add clang-format-apply target
-###########################################
+# ##############################################################################
 set(CLANG_STYLE_FILE ${HELPERS}/.clang-format)
 set(CLANG_FMT_CMD ${HELPERS}/clang-format.sh)
-
-add_custom_target(clang-format-apply
-                    COMMAND env STYLE=${CLANG_STYLE_FILE}
-                            SILENT=true ${CLANG_FMT_CMD}
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+add_custom_target(
+    clang-format-apply
+    COMMAND env STYLE=${CLANG_STYLE_FILE} SILENT=true ${CLANG_FMT_CMD}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 add_dependencies(clang-format-apply license-check)
-###########################################
+# ##############################################################################
 # Add cmake-format-apply target
-###########################################
+# ##############################################################################
 set(CMAKE_FMT_CMD ${HELPERS}/cmake-format.sh ${CMAKE_SOURCE_DIR})
-
 set(CMAKE_STYLE_FILE ${HELPERS}/.cmake-format)
-
 add_custom_target(cmake-format-apply COMMAND env STYLE=${CMAKE_STYLE_FILE}
                                              SILENT=true ${CMAKE_FMT_CMD})
-
+add_dependencies(cmake-format-apply license-check)
+# ##############################################################################
+# Add git-diff-check target
+# ##############################################################################
 add_custom_target(git-diff-check COMMAND git --no-pager diff --exit-code)
