@@ -1,12 +1,6 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required(VERSION 3.22)
-project(
-    CSB
-    LANGUAGES C
-    DESCRIPTION "Builtin Benchmarks of CSB")
-
 add_library(CSB INTERFACE)
 
 target_include_directories(
