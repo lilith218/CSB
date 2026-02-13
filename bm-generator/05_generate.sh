@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 
- : ${DIR_TEMPLATES:="./templates"}
-
- cd "${DIR_TEMPLATES}"
-
- ./sgen_tmplr.sh
+cmake -S. -Bbuild
+cmake --build build --target csb-generate
+cmake --build build --target csb-gen-agg

@@ -51,3 +51,6 @@ endforeach(TOOL in ${TOOLS})
 
 # Save syzkaller path to a file.
 file(WRITE "${CMAKE_BINARY_DIR}/syzkaller-path.txt" "${syzkaller_SOURCE_DIR}")
+
+add_subdirectory(templates)
+
