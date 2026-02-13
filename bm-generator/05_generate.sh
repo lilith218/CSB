@@ -3,6 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 
-cmake -S. -Bbuild
-cmake --build build --target csb-generate
-cmake --build build --target csb-gen-agg
+cmake -S../ -B../build
+cmake --build ../build --target csb-generate
+cmake --build ../build --target csb-gen-agg

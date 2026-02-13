@@ -44,7 +44,6 @@ foreach(TOOL IN ITEMS ${TOOLS})
         COMMAND go build
         WORKING_DIRECTORY "${TOOLS_DIR}/${TOOL_NAME}"
     )
-    add_dependencies(${TARGET_NAME} ${TOOL})
 endforeach(TOOL in ${TOOLS})
 
 # Save syzkaller path to a file.
