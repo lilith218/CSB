@@ -5,8 +5,9 @@ include(FetchContent)
 
 message(STATUS "Fetching syzkaller ...")
 
-set(TARGET_NAME syz)
+
 set(SYZKALLER syzkaller)
+add_custom_target(${SYZKALLER})
 
 FetchContent_Declare(
     ${SYZKALLER}
@@ -18,7 +19,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(${SYZKALLER})
 
 FetchContent_GetProperties(${SYZKALLER} SOURCE_DIR SYZKALLER_SOURCE_DIR)
-message("${SYZKALLER_SOURCE_DIR}")
+
 find_program(GO_EXECUTABLE go)
 if(NOT GO_EXECUTABLE)
     message(FATAL_ERROR "Go compiler not found. Please install Go.")
@@ -26,10 +27,12 @@ endif()
 message(STATUS "Go found at: ${GO_EXECUTABLE}")
 
 # build syzkaller
+set(TARGET_NAME syz)
 add_custom_target(
     ${TARGET_NAME}
     COMMAND make
     WORKING_DIRECTORY ${SYZKALLER_SOURCE_DIR})
+add_dependencies(${SYZKALLER} ${TARGET_NAME})
 
 set(TOOLS_DIR "${SYZKALLER_SOURCE_DIR}/tools")
 # Tools we want to build of syzkaller
@@ -41,6 +44,8 @@ foreach(TOOL IN ITEMS ${TOOLS})
         ${TOOL}
         COMMAND go build
         WORKING_DIRECTORY "${TOOLS_DIR}/${TOOL_NAME}")
+    add_dependencies(${TOOL} ${TARGET_NAME})
+    add_dependencies(${SYZKALLER} ${TOOL})
 endforeach(TOOL in ${TOOLS})
 
 # Save syzkaller path to a file.
