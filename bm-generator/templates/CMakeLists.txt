@@ -8,6 +8,8 @@ set(TMPLR_TARGET tmplr-build)
 set(SINGLE_BM_TARGET csb-generate)
 add_custom_target(${SINGLE_BM_TARGET})
 
+# Since target SINGLE_BM_TARGET generates header files, we want to format these
+# files right after the generation
 add_custom_command(
     TARGET ${SINGLE_BM_TARGET}
     POST_BUILD
@@ -81,8 +83,3 @@ add_custom_target(
     COMMAND ${TMPLR_PROGRAM} -DNN="${APPLICATIONS}" -DNPROCS="${FILES_NUM}"
             ${INPUT_TEMPLATE} > ${OUTPUT_FILE})
 add_dependencies(${AGGREGATE_TARGET} ${TMPLR_TARGET})
-add_custom_command(
-    TARGET ${AGGREGATE_TARGET}
-    POST_BUILD
-    COMMAND cmake --build "${CMAKE_BINARY_DIR}" --target clang-format-apply
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
