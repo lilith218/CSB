@@ -8,10 +8,12 @@ project(
     LANGUAGES C
     DESCRIPTION "Builtin Benchmarks of CSB")
 
-add_subdirectory(bench)
+option(CSB_BM_GENERATOR "Turns bm-generator ON/OFF" OFF)
 
-# TODO: add based on a cmake option! or fetch syzkaller on demand
-add_subdirectory(bm-generator)
+add_subdirectory(bench)
+if(CSB_BM_GENERATOR)
+    add_subdirectory(bm-generator)
+endif(CSB_BM_GENERATOR)
 
 set(HELPERS ${CMAKE_SOURCE_DIR}/helpers)
 
