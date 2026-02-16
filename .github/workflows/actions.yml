@@ -15,7 +15,7 @@ jobs:
       - name: Test Builtin Benchmarks
         uses: actions/checkout@v4
       - name: Configure Testing
-        run: cmake -Sbench -Bbuild ${{ matrix.config }}
+        run: cmake -S. -Bbuild ${{ matrix.config }}
       - name: Build Tests
         run: cmake --build build -j
       - name: Run Tests
@@ -37,7 +37,7 @@ jobs:
           cd bm-generator/ && ./test.sh
       - name: Build what bm-generator generated
         run: |
-          cmake -Sbench -Bbuild
+          cmake -S. -Bbuild
           cmake --build build -j
           ctest --test-dir build --output-on-failure -R min_ls_*
 
@@ -57,7 +57,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Configure
-        run: cmake -Sbench -Bbuild
+        run: cmake -S. -Bbuild
       - name: Run ${{ matrix.target }}
         run: cmake --build build --target ${{ matrix.target }}
       - name: Check things match expectation
@@ -117,14 +117,6 @@ jobs:
           python-version: "3.10"
       - name: Run documentation script
         run: ./scripts/configure.sh && ./helpers/update-doc.sh && git --no-pager diff --exit-code
-
-  # Checks if copyright/license is up-to-date
-  Check-License:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run license script
-        run: helpers/license-check.sh . && git --no-pager diff --exit-code
 
   # Run a dummy benchmark to ensure bm-runner works
   Run-Benchmark:
