@@ -83,11 +83,8 @@ class Application(dict):
             shutil.copy(fname, os.path.join(binary_path, self.name))
         else:
             if exists_system_wide(self.name):
-                bm_log("am I returning here ??")
                 return f"{self.name} "
             fname = ensure_exists(name=self.name, dir=binary_path)
-
-        bm_log(f"./{os.path.join(self.BUILTIN_APP_DIR, self.name)}")
         return f"./{os.path.join(self.BUILTIN_APP_DIR, self.name)} "
 
     def get_cmd(self, threads, duration, noise, initial_size, index, work_dir: Path) -> str:
