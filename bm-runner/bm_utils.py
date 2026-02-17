@@ -18,9 +18,9 @@ from benchkit.utils.types import PathType
 def resolve_path(path: PathType, use_in_container: bool = False) -> PathType:
     """
     Returns the absolute path of the given path with respect to
-    CSB root dir. The absolute path differ depending on
+    CSB root dir. The absolute path differs depending on
     use_in_container input.
-    This functions works under the assumption that CSB is mounted
+    This function works under the assumption that CSB is mounted
     to /home inside the container.
     """
     csb_dir = Path(os.getcwd()).parent
