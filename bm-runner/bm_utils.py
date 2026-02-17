@@ -15,7 +15,7 @@ from utils.logger import bm_log, LogType
 from benchkit.utils.types import PathType
 
 
-def resolve_path(path: PathType, use_in_container: bool = False) -> Path:
+def resolve_path(path: PathType, use_in_container: bool = False) -> PathType:
     """
     Returns the absolute path of the given path with respect to
     CSB root dir. The absolute path differ depending on
@@ -28,7 +28,7 @@ def resolve_path(path: PathType, use_in_container: bool = False) -> Path:
         path = Path(path).relative_to(csb_dir)
     homedir = "/home" if use_in_container else csb_dir
     new_path = os.path.join(homedir, path)
-    return Path(new_path)
+    return new_path
 
 
 # Builds the C micro-benchmarks
