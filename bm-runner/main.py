@@ -65,8 +65,7 @@ def v_campaign(
             command_attachments=command_attachments,
             shared_libs=shared_libs,
             post_run_hooks=post_run_hooks,
-            bench_subdir=bench_subdir,
-            build_dir=bm_build_path,
+            csb_dir=csb_dir
         ),
         nb_runs=nb_runs,
         variables=variables,
@@ -114,8 +113,10 @@ if __name__ == "__main__":
 
     # find the arguments
     script_path = get_curdir(__file__)
+    csb_dir = parentdir(script_path)
+    bm_log(f"CSB Project directory: {csb_dir}")
     # ../bench/
-    bm_build_path = os.path.join(parentdir(script_path), "build")
+    bm_build_path = os.path.join(csb_dir, "build")
 
     # Campaign Parameters
     assert bm_config.g_config is not None

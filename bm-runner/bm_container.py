@@ -18,9 +18,6 @@ from utils.logger import bm_log, LogType
 
 
 class Container(ExecutionUnit):
-    # containers will share the same /home
-    START_FILE = "/home/start"
-
     def __init__(
         self,
         idx,
@@ -113,7 +110,7 @@ class Container(ExecutionUnit):
             bm_log(f"Could not start container {self.name}: {str(e)}", LogType.ERROR)
 
     def exec(self, command):
-        commands = f"{self.CMD_WHILE_NOT_START} {command} > /home/{self.name}"  # same as self.output_file outside container.
+        commands = f"{self.CMD_WHILE_NOT_START} {command} > {self.output_file}"  # same as self.output_file outside container.
         self.__start(commands)
 
 
