@@ -3,7 +3,6 @@
 
 import argparse
 import pathlib
-import os
 import sys
 from pathlib import Path
 import bm_visualize
