@@ -15,7 +15,7 @@ from config.nics import NicsConfig, ContainerNicConfig
 from config.application import Application
 from config.benchmark import ExecutionType
 from utils.logger import bm_log, LogType
-
+from bm_utils import resolve_path
 
 class Container(ExecutionUnit):
     def __init__(
@@ -110,7 +110,7 @@ class Container(ExecutionUnit):
             bm_log(f"Could not start container {self.name}: {str(e)}", LogType.ERROR)
 
     def exec(self, command):
-        commands = f"{self.CMD_WHILE_NOT_START} {command} > {self.output_file}"  # same as self.output_file outside container.
+        commands = f"{self.CMD_WHILE_NOT_START} {command} > {resolve_path(self.output_file, True)}"  # same as self.output_file outside container.
         self.__start(commands)
 
 

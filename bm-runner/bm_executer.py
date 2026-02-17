@@ -15,7 +15,7 @@ from config.benchmark import ExecutionType
 from bm_utils import is_port_free_to_use
 from monitors.monitor_factory import MonitorFactory
 from utils.logger import bm_log, LogType
-
+from bm_utils import resolve_path
 
 class ExecutionUnit:
     START_FILE = f"{Application.BUILTIN_APP_DIR}/start"
@@ -28,11 +28,7 @@ class ExecutionUnit:
         self.home_dir = home_dir
         self.name = "C" if type == ExecutionType.CONTAINER else "N"
         self.name += f"{idx:03d}_{app.name}"
-        if type == ExecutionType.CONTAINER:
-            self.path = os.path.join("/home", Application.BUILTIN_APP_DIR)
-        else:
-            self.path = os.path.join(home_dir, Application.BUILTIN_APP_DIR)
-        self.output_file = os.path.join(self.path, self.name)
+        self.output_file = os.path.join(Application.BUILTIN_APP_DIR, self.name)
 
     @abstractmethod
     def exec(self, command):
@@ -47,9 +43,7 @@ class ExecutionUnit:
         pass
 
     def get_output(self) -> str:
-        fname = os.path.join(self.home_dir, Application.BUILTIN_APP_DIR, self.name)
-        bm_log(f"get_output {fname}")
-        line = open(fname, "r").read()
+        line = open(resolve_path(self.output_file), "r").read()
         # If there is an adapter, it means that
         # the applications' output needs to be transformed
         # after collection. This is important to have
@@ -64,7 +58,7 @@ class Executer:
     def __init__(self, home_dir, results_dir):
         assert bm_config.g_config
         self.home_dir = home_dir
-        self.results_dir = results_dir.relative_to(home_dir)
+        self.results_dir = results_dir
         self.exec_units = []
         self.plugins = bm_config.g_config.get_plugins()
         self.nics = bm_config.g_config.get_nics()
@@ -150,9 +144,10 @@ class Executer:
         bm_log("cleaning up, stopping all processes/containers")
         for eu in self.exec_units:
             eu.stop()
-        if os.path.exists(ExecutionUnit.START_FILE):
+        start_file = resolve_path(ExecutionUnit.START_FILE)
+        if os.path.exists(start_file):
             bm_log(f"Deleting file {ExecutionUnit.START_FILE}", LogType.ERROR)
-            os.remove(ExecutionUnit.START_FILE)
+            os.remove(start_file)
         self.__stop_monitors()
         self.__call_plugins(ExecutionTime.CLEANUP)
         self.__stop_plugins()

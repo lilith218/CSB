@@ -14,6 +14,18 @@ import json
 from utils.logger import bm_log, LogType
 
 
+def resolve_path(path: Path, use_in_container:bool = False) -> Path:
+    csb_dir = Path(os.getcwd()).parent
+    if Path(path).is_relative_to(csb_dir):
+        new_path = Path(path).relative_to(csb_dir)
+        bm_log(f"new_path: {new_path}", LogType.FATAL)
+
+    homedir = "/home" if use_in_container else csb_dir
+    new_path = os.path.join(homedir, path)
+    bm_log(f"with homedir: {new_path}", LogType.FATAL)
+    bm_log(f"{path} translated to {new_path}", LogType.FATAL)
+    return new_path
+
 # Builds the C micro-benchmarks
 # bench_src_dir should be the project folder of bench
 def build_bench(bench_src_dir):
