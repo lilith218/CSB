@@ -7,3 +7,6 @@
 [submodule "deps/inferno"]
 	path = deps/inferno
 	url = https://github.com/open-s4c/inferno
+[submodule "deps/syzkaller"]
+	path = deps/syzkaller
+	url = https://github.com/open-s4c/syzkaller.git
