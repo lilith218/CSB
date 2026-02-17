@@ -114,9 +114,6 @@ if __name__ == "__main__":
     # find the arguments
     script_path = get_curdir(__file__)
     csb_dir = parentdir(script_path)
-    bm_log(f"CSB Project directory: {csb_dir}")
-    # ../bench/
-    bm_build_path = os.path.join(csb_dir, "build")
 
     # Campaign Parameters
     assert bm_config.g_config is not None
