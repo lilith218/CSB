@@ -65,7 +65,7 @@ def v_campaign(
             command_attachments=command_attachments,
             shared_libs=shared_libs,
             post_run_hooks=post_run_hooks,
-            csb_dir=csb_dir
+            csb_dir=csb_dir,
         ),
         nb_runs=nb_runs,
         variables=variables,

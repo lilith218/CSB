@@ -12,9 +12,10 @@ from typing import Optional
 from pathlib import Path
 import json
 from utils.logger import bm_log, LogType
+from benchkit.utils.types import PathType
 
 
-def resolve_path(path: Path, use_in_container:bool = False) -> Path:
+def resolve_path(path: PathType, use_in_container: bool = False) -> Path:
     """
     Returns the absolute path of the given path with respect to
     CSB root dir. The absolute path differ depending on
@@ -27,7 +28,8 @@ def resolve_path(path: Path, use_in_container:bool = False) -> Path:
         path = Path(path).relative_to(csb_dir)
     homedir = "/home" if use_in_container else csb_dir
     new_path = os.path.join(homedir, path)
-    return new_path
+    return Path(new_path)
+
 
 # Builds the C micro-benchmarks
 # bench_src_dir should be the project folder of bench
@@ -184,7 +186,9 @@ def exists_system_wide(cmd: str) -> bool:
     return shutil.which(cmd) is not None
 
 
-def ensure_exists(name: str, dir: Optional[Path] = None, env_var_dir: Optional[str] = None) -> str:
+def ensure_exists(
+    name: str, dir: Optional[PathType] = None, env_var_dir: Optional[str] = None
+) -> str:
     """
     Checks if the given binary is found under the given `dir`,
     available system wide, or in the dir specified by `env_var_dir` respectively.

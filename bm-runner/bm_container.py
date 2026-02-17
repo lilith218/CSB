@@ -17,6 +17,7 @@ from config.benchmark import ExecutionType
 from utils.logger import bm_log, LogType
 from bm_utils import resolve_path
 
+
 class Container(ExecutionUnit):
     def __init__(
         self,

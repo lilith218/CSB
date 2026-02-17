@@ -11,9 +11,7 @@ from benchkit.benchmark import (
     RecordResult,
 )
 import sys
-import os
 from benchkit.dependencies.packages import PackageDependency
-from benchkit.utils.dir import parentdir
 from typing import Iterable, Optional, Dict, Any, List
 import bm_utils
 from bm_container import Containers

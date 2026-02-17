@@ -17,6 +17,7 @@ from monitors.monitor_factory import MonitorFactory
 from utils.logger import bm_log, LogType
 from bm_utils import resolve_path
 
+
 class ExecutionUnit:
     START_FILE = f"{Application.BUILTIN_APP_DIR}/start"
     CMD_WHILE_NOT_START = f"while [ ! -e {START_FILE} ]; do sleep 0.1; done;"
@@ -55,6 +56,7 @@ class ExecutionUnit:
 
 class Executer:
     SLEEP_IN_SEC = 5
+
     def __init__(self, home_dir, results_dir):
         assert bm_config.g_config
         self.home_dir = home_dir
@@ -146,7 +148,6 @@ class Executer:
             eu.stop()
         start_file = resolve_path(ExecutionUnit.START_FILE)
         if os.path.exists(start_file):
-            bm_log(f"Deleting file {ExecutionUnit.START_FILE}", LogType.ERROR)
             os.remove(start_file)
         self.__stop_monitors()
         self.__call_plugins(ExecutionTime.CLEANUP)
