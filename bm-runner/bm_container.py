@@ -111,7 +111,7 @@ class Container(ExecutionUnit):
             bm_log(f"Could not start container {self.name}: {str(e)}", LogType.ERROR)
 
     def exec(self, command):
-        commands = f"{self.CMD_WHILE_NOT_START} {command} > {resolve_path(self.output_file, True)}"  # same as self.output_file outside container.
+        commands = f"{self.CMD_WHILE_NOT_START} {command} > {resolve_path(self.output_file, use_in_container=True)}"  # same as self.output_file outside container.
         self.__start(commands)
 
 
