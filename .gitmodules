@@ -10,4 +10,3 @@
 [submodule "deps/syzkaller"]
 	path = deps/syzkaller
 	url = https://github.com/open-s4c/syzkaller.git
-	ignore = all
