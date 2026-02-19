@@ -9,6 +9,7 @@ set(SYZKALLER syzkaller)
 add_custom_target(${SYZKALLER})
 
 if(CSB_SYZKALLER_FETCH)
+    # An alternative to using syzkaller as a submodule
     FetchContent_Declare(
         ${SYZKALLER}
         GIT_REPOSITORY https://github.com/open-s4c/syzkaller.git
