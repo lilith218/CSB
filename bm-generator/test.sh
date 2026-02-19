@@ -6,9 +6,15 @@ set -e
 STRACE_LOG="ls_strace.log"
 APP="ls"
 FILE_LOG=${STRACE_LOG} helper/collect_strace.sh ${APP}
+echo "STEP#0: Initializing ..."
 ./00_init.sh
+echo "STEP#1: Building ..."
 ./01_build.sh
+echo "STEP#2: Parsing ${STRACE_LOG} ..."
 ./02_parse.sh ${STRACE_LOG}
+echo "STEP#3: Extracting ..."
 ./03_extract.sh
+echo "STEP#4: Preparing ..."
 ./04_prepare.sh
+echo "STEP#5: Generating ..."
 ./05_generate.sh
