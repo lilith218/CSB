@@ -3,21 +3,25 @@
 
 include(FetchContent)
 
-message(STATUS "Fetching syzkaller ...")
+option(CSB_SYZKALLER_FETCH "Allows syzkaller fetching in cmake ON/OFF" OFF)
 
 set(SYZKALLER syzkaller)
 add_custom_target(${SYZKALLER})
 
-FetchContent_Declare(
-    ${SYZKALLER}
-    GIT_REPOSITORY https://github.com/open-s4c/syzkaller.git
-    GIT_TAG bf8bf3b26909a630a4a582ddaabaccdc6756bbb6
-    GIT_PROGRESS TRUE
-    EXCLUDE_FROM_ALL)
+if(CSB_SYZKALLER_FETCH)
+    FetchContent_Declare(
+        ${SYZKALLER}
+        GIT_REPOSITORY https://github.com/open-s4c/syzkaller.git
+        GIT_TAG bf8bf3b26909a630a4a582ddaabaccdc6756bbb6
+        GIT_PROGRESS TRUE
+        EXCLUDE_FROM_ALL)
 
-FetchContent_MakeAvailable(${SYZKALLER})
+    FetchContent_MakeAvailable(${SYZKALLER})
 
-FetchContent_GetProperties(${SYZKALLER} SOURCE_DIR SYZKALLER_SOURCE_DIR)
+    FetchContent_GetProperties(${SYZKALLER} SOURCE_DIR SYZKALLER_SOURCE_DIR)
+else()
+    set(SYZKALLER_SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/syzkaller)
+endif()
 
 find_program(GO_EXECUTABLE go)
 if(NOT GO_EXECUTABLE)
