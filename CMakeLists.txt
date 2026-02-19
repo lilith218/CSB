@@ -9,7 +9,7 @@ project(
     DESCRIPTION "Builtin Benchmarks of CSB")
 
 option(CSB_BM_GENERATOR "Turns bm-generator ON/OFF" OFF)
-
+include(CTest)
 add_subdirectory(bench)
 if(CSB_BM_GENERATOR)
     add_subdirectory(bm-generator)
