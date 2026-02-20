@@ -1,5 +1,5 @@
 name: CSB actions
-on: [push, pull_request]
+on: [workflow_dispatch, push, pull_request]
 
 jobs:
   # Runs builtin benchmarks with ctest
@@ -161,11 +161,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y build-essential cmake libhiredis-dev
-          echo "CSB_ADAPTERS=$GITHUB_WORKSPACE/scripts/adapters" >> $GITHUB_ENV
-          echo "CSB_PLUGINS=$GITHUB_WORKSPACE/scripts/plugins" >> $GITHUB_ENV
-          echo "FLAMEGRAPH=$GITHUB_WORKSPACE/deps/FlameGraph" >> $GITHUB_ENV
       - name: Run Benchmark ${{ matrix.benchmark }}
-        run: ./scripts/configure.sh && . ./venv/bin/activate && cd bm-runner && python3 main.py --title "dummy benchmark" --config ../config/${{ matrix.benchmark }}.json
+        run: bash -c "scripts/fg-diff/run-single.sh config/${{ matrix.test }}.json"
       - name: Fix artifact permissions
         if: always()
         run: sudo chmod -R a+r results/
