@@ -254,7 +254,7 @@ class FlameGraph(Monitor):
     @classmethod
     def lock_contention_dataframe(cls, csv_file: Path) -> DataFrame:
         if not csv_file.exists() or csv_file.stat().st_size == 0:
-            bm_log(f"CSV not exists or size=0 {csv_file}: {e}", LogType.ERROR)
+            bm_log(f"CSV not exists or size=0 {csv_file}", LogType.ERROR)
             return pd.DataFrame()
 
         try:
