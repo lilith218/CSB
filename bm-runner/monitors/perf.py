@@ -254,6 +254,7 @@ class FlameGraph(Monitor):
     @classmethod
     def lock_contention_dataframe(cls, csv_file: Path) -> DataFrame:
         if not csv_file.exists() or csv_file.stat().st_size == 0:
+            bm_log(f"CSV not exists or size=0 {csv_file}: {e}", LogType.ERROR)
             return pd.DataFrame()
 
         try:
@@ -263,12 +264,27 @@ class FlameGraph(Monitor):
             bm_log(f"Could not read lock-contention output from {csv_file}: {e}", LogType.ERROR)
             return pd.DataFrame()
 
+
+        lines = content.splitlines()
+        # Find the line with the header
+        header_line = next(
+            (line for line in lines if line.lstrip().startswith("# output:")), 
+            None
+        )
+
+        if header_line is None:
+            return pd.DataFrame()  # or handle error
+
+        # Remove the '# output:' prefix and split into column names
+        header = [col.strip() for col in header_line.replace("# output:", "").split(cls.LOCK_CONTENTION_SEPARATOR)]
+
         table_lines = [
             line.strip()
             for line in content.splitlines()
             if cls.LOCK_CONTENTION_SEPARATOR in line and not line.lstrip().startswith("#")
         ]
         if not table_lines:
+            bm_log(f"Could not extract tables from {csv_file}: {e}", LogType.ERROR)
             return pd.DataFrame()
 
         try:
@@ -276,6 +292,8 @@ class FlameGraph(Monitor):
                 StringIO("\n".join(table_lines)),
                 sep=cls.LOCK_CONTENTION_SEPARATOR,
                 engine="python",
+                header=None,
+                names=header
             )
         except pd.errors.ParserError as e:
             bm_log(f"Could not parse lock-contention output from {csv_file}: {e}", LogType.ERROR)
@@ -286,21 +304,24 @@ class FlameGraph(Monitor):
     @classmethod
     def normalize_lock_contention_dataframe(cls, raw_df: DataFrame) -> DataFrame:
         if raw_df.empty:
+            bm_log(f"Normalize got empty df: {raw_df}", LogType.ERROR)
             return pd.DataFrame()
 
         raw_df = raw_df.rename(columns=lambda col: str(col).strip())
         metric_columns = {
-            "contended": cls.find_column(raw_df, ["contended"]),
+            "contended": cls.find_column(raw_df, ["contended", "output: contended"]),
             "wait_total": cls.find_column(raw_df, ["wait_total", "total_wait"]),
             "wait_max": cls.find_column(raw_df, ["wait_max", "max_wait"]),
             "avg_wait": cls.find_column(raw_df, ["avg_wait", "average_wait"]),
         }
         metric_columns = {metric: col for metric, col in metric_columns.items() if col}
         if not metric_columns:
+            bm_log(f"Normalize got no metric columns: {raw_df.columns}", LogType.ERROR)
             return pd.DataFrame()
 
         label_column = cls.find_label_column(raw_df, set(metric_columns.values()))
         if label_column is None:
+            bm_log(f"Label not found: {raw_df}", LogType.ERROR)
             return pd.DataFrame()
 
         df = pd.DataFrame()
@@ -364,7 +385,7 @@ class FlameGraph(Monitor):
 
     @staticmethod
     def normalize_column_name(name: str) -> str:
-        return re.sub(r"[^0-9a-z]+", "_", str(name).strip().lower()).strip("_")
+        return re.sub(r"[^0-9a-z# ]+", "_", str(name).strip().lower()).strip("_")
 
     @staticmethod
     def to_numeric_series(series) -> pd.Series:
