@@ -28,7 +28,7 @@ class MonitorType(str, Enum):
     Members
     ----------
     MPSTAT: Runs mpstat and generates related graphs.
-    PERF: Runs perf and generates flame-graphs.
+    PERF: Runs perf and generates flame-graphs and lock-contention graphs.
     REDIS_BENCHMARK: parses the output of redis_benchmark.
     SAR_NET: monitors network traffic.
     PERF_STAT: Runs perf stat.

@@ -116,7 +116,7 @@ CPU/Core assignment policy for execution units, i.e. containers and native proce
 ## MonitorType
 Monitors are used to monitor performance. They can be used to analyze the behavior of the benchmarks.  <br/>Supported values:
 - `"mpstat"`:  Runs mpstat and generates related graphs.
-- `"perf"`:  Runs perf and generates flame-graphs.
+- `"perf"`:  Runs perf and generates flame-graphs and lock-contention graphs. Lock-contention output is generated when the kernel exposes the required `perf lock` tracepoints.
 - `"redis_benchmark"`:  parses the output of redis_benchmark.
 - `"sar_net"`:  monitors network traffic.
 - `"perf_stat"`:  Runs perf stat.

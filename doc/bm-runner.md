@@ -29,6 +29,7 @@ Install other system-level dependencies
 ```
 $ sudo dnf install cmake perf sysstat sudo gcc moby-engine moby-client hiredis-devel jq cargo glibc-all-langpacks
 ```
+The `perf` monitor also records lock contention when the kernel exposes the required `perf lock` tracepoints. If those tracepoints are unavailable, CSB keeps the normal flamegraph output and skips only the lock-contention graph.
 Please make sure that the user executing the benchmark has permissions to manage docker containers, as well as that docker can access the [proxy](https://docs.docker.com/engine/daemon/proxy/#systemd-unit-file), if necessary.
 After this, you should be able to run the benchmark suite.
 
