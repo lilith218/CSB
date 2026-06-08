@@ -531,11 +531,7 @@ def visualize_in_html(output_dir: Path, title: str, plots: list[PlotConfig]):
     hostname = data_frame["hostname"].unique()
     # we split the data-frame into multiple data frames to help with visualization
     data_frames = split_data_frame(data_frame)
-<<<<<<< Updated upstream
-=======
-    IostatStats.dump_plots_for_tree(output_dir)
     FlameGraph.dump_lock_contention_plots_for_tree(output_dir)
->>>>>>> Stashed changes
     # For each data frame we'll generate the related graphs
     # and print related information
     for key, df in data_frames.items():
