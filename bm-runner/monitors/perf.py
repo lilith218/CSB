@@ -74,7 +74,7 @@ class FlameGraph(Monitor):
     @classmethod
     def lock_record_cmd(cls, args: list[str]) -> list[str]:
         cmds = ["sudo", "perf", "lock", "record", "--output", cls.LOCK_DATA_FILE]
-        cmds.extend("-e", "lock:contention_begin", "-e", "lock:contention_end" )
+        cmds.extend(["-e", "lock:contention_begin", "-e", "lock:contention_end"] )
         return cmds
 
     @classmethod
