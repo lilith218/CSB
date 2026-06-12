@@ -61,6 +61,7 @@ class PerfLock(Monitor):
         self.__run_lock_contention()
         df = read_data_frame_from_csv(self.perf_contention_csv, names=self.header)
         self.__plot(df)
+        print(df)
         if df is None:
             bm_log(f"{self.name} did not produce a valid data-frame", LogType.ERROR)
             return ""
