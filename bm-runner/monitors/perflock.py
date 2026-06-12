@@ -32,7 +32,8 @@ class PerfLock(Monitor):
         self.name = "perf-lock"
         self.outfile_name = f"{self.name}.data"
         self.report_file = f"{self.name}-report.csv"
-        cmds = ["sudo", "perf", "lock", "record", "--output", self.outfile_name]
+        cmds = ["sudo", "perf", "lock", "record",  "-e", "lock:contention_begin",
+            "-e", "lock:contention_end", "--output", self.outfile_name]
         cmds.extend(args)
         # TODO: check if kernel flags are set
         # TODO: check if lock contention is supported
@@ -51,8 +52,6 @@ class PerfLock(Monitor):
             "perf",
             "lock",
             "contention",
-            "-e", "lock:contention_begin",
-            "-e", "lock:contention_end",
             "-i",
             self.outfile_name,
             "-x",
