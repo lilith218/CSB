@@ -51,6 +51,8 @@ class PerfLock(Monitor):
             "perf",
             "lock",
             "contention",
+            "-e", "lock:contention_begin",
+            "-e", "lock:contention_end"
             "-i",
             self.outfile_name,
             "-x",
