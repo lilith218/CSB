@@ -120,19 +120,7 @@ class PerfLock(Monitor):
             command=self.lock_contention_cmd(),
             current_dir=self.dir
         )
-        # try:
-        #     subprocess.run(
-        #         self.lock_contention_cmd(),
-        #         cwd=self.dir,
-        #         stdout=errfile,
-        #         stderr=errfile,
-        #         check=True,
-        #     )
-        # except subprocess.CalledProcessError as e:
-        #     bm_log(f"Failed to generate lock-contention report: {e}", LogType.ERROR)
-        #     return
-
-        # self.dump_lock_contention_plot_from_file(Path(self.dir) / self.LOCK_CONTENTION_CSV)
+        self.dump_lock_contention_plot_from_file(Path(self.dir) / self.report_file)
 
     @classmethod
     def dump_lock_contention_plots_for_tree(cls, output_dir: Path):
