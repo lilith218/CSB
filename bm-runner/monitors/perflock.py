@@ -90,7 +90,7 @@ class PerfLock(Monitor):
         shell_out(command=cmd, current_dir=self.dir)
 
     def __plot(self, df):
-        cfg = PlotConfig(x="avg_wait", y="caller", hue="type")
+        cfg = PlotConfig(y="avg_wait", x="caller", hue="type")
         plot_chart(cfg, df, os.path.join(self.dir, "lock-contention"))
 
     def stop(self):
