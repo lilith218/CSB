@@ -11,7 +11,7 @@ from bm_utils import stop_process
 
 
 class BackgroundProcess:
-    TIMEOUT_SEC = 5
+    TIMEOUT_SEC = 10
     Env = {"LANG": "en_US.UTF-8", "LC_ALL": "en_US.UTF-8"}
 
     def __init__(
