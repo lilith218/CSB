@@ -74,7 +74,7 @@ class FlameGraph(Monitor):
     @classmethod
     def lock_record_cmd(cls, args: list[str]) -> list[str]:
         cmds = ["sudo", "perf", "lock", "record", "--output", cls.LOCK_DATA_FILE]
-        cmds.extend(args)
+        cmds.extend("-e", "lock:contention_begin", "-e", "lock:contention_end" )
         return cmds
 
     @classmethod
@@ -268,7 +268,7 @@ class FlameGraph(Monitor):
         lines = content.splitlines()
         # Find the line with the header
         header_line = next(
-            (line for line in lines if line.lstrip().startswith("# output:")), 
+            (line for line in lines if line.lstrip().startswith("# output:")),
             None
         )
 
