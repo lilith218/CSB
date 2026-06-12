@@ -32,6 +32,7 @@ class MonitorType(str, Enum):
     REDIS_BENCHMARK: parses the output of redis_benchmark.
     SAR_NET: monitors network traffic.
     PERF_STAT: Runs perf stat.
+    PERF_LOCK: Runs perf lock, and perf lock contention if supported.
     """
 
     MPSTAT = "mpstat"
@@ -39,6 +40,7 @@ class MonitorType(str, Enum):
     REDIS_BENCHMARK = "redis_benchmark"
     SAR_NET = "sar_net"
     PERF_STAT = "perf_stat"
+    PERF_LOCK = "perf_lock"
 
 
 class BenchmarkConfig(dict):

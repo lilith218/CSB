@@ -19,43 +19,46 @@ from bm_utils import resolve_path
 from utils.logger import bm_log, LogType
 from utils.process import BackgroundProcess
 from config.env_config import EnvUniversalConfig, UniversalConfig
-
+from benchkit.shell.shell import shell_out
 
 class PerfLock(Monitor):
-    LOCK_DATA_FILE = "perf-lock.data"
     LOCK_CONTENTION_CSV = "lock-contention.csv"
     LOCK_CONTENTION_PLOT = "lock-contention.png"
     LOCK_CONTENTION_SEPARATOR = ";"
     LOCK_CONTENTION_TOP_N = 20
 
-    def __init__(self, output_dir: str, args: Optional[list[str]] = ["-a"]):
+    def __init__(self, output_dir: str, args: Optional[list[str]] = []):
         super().__init__(dir=output_dir, args=args)
-        cmds = ["sudo", "perf", "lock", "record", "--output", self.LOCK_DATA_FILE]
+        self.name = "perf-lock"
+        self.outfile_name = f"{self.name}.data"
+        self.report_file = f"{self.name}-report.csv"
+        cmds = ["sudo", "perf", "lock", "record", "--output", self.outfile_name]
         cmds.extend(args)
-
+        # TODO: check if kernel flags are set
+        # TODO: check if lock contention is supported
         self.perf_lock = BackgroundProcess(
-            name="perf-lock",
+            name=self.name,
             out_dir=output_dir,
             cmds=cmds,
             requires=["perf"],
             pin=self.get_cpus(),
         )
 
-    @classmethod
-    def lock_contention_cmd(cls) -> list[str]:
+
+    def lock_contention_cmd(self) -> list[str]:
         return [
             "sudo",
             "perf",
             "lock",
             "contention",
             "-i",
-            cls.LOCK_DATA_FILE,
+            self.outfile_name,
             "-x",
-            cls.LOCK_CONTENTION_SEPARATOR,
+            ";",
             "-F",
             "contended,wait_total,wait_max,avg_wait",
             "--output",
-            cls.LOCK_CONTENTION_CSV,
+            self.report_file,
         ]
 
     @classmethod
@@ -71,7 +74,6 @@ class PerfLock(Monitor):
     def collect_results(self):
         return ""
 
-    def __generate_flamegraph(self, errfile):
         """
         Generates flamegraph on perf.data in output dir
         """
@@ -112,32 +114,24 @@ class PerfLock(Monitor):
                 )
             except subprocess.CalledProcessError as e:
                 bm_log(f"Failed to generate flamegraph: {e}", LogType.ERROR)
+    def __generate_lock_contention(self):
+        shell_out(
+            command=self.lock_contention_cmd(),
+            current_dir=self.dir
+        )
+        # try:
+        #     subprocess.run(
+        #         self.lock_contention_cmd(),
+        #         cwd=self.dir,
+        #         stdout=errfile,
+        #         stderr=errfile,
+        #         check=True,
+        #     )
+        # except subprocess.CalledProcessError as e:
+        #     bm_log(f"Failed to generate lock-contention report: {e}", LogType.ERROR)
+        #     return
 
-    def __generate_lock_contention(self, errfile):
-        """
-        Generates lock-contention report and plot from perf-lock.data in output dir.
-        """
-        lock_data = os.path.join(self.dir, self.LOCK_DATA_FILE)
-        if not os.path.exists(lock_data):
-            bm_log(
-                f"{self.LOCK_DATA_FILE} is missing; lock-contention graph will not be generated.",
-                LogType.WARNING,
-            )
-            return
-
-        try:
-            subprocess.run(
-                self.lock_contention_cmd(),
-                cwd=self.dir,
-                stdout=errfile,
-                stderr=errfile,
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            bm_log(f"Failed to generate lock-contention report: {e}", LogType.ERROR)
-            return
-
-        self.dump_lock_contention_plot_from_file(Path(self.dir) / self.LOCK_CONTENTION_CSV)
+        # self.dump_lock_contention_plot_from_file(Path(self.dir) / self.LOCK_CONTENTION_CSV)
 
     @classmethod
     def dump_lock_contention_plots_for_tree(cls, output_dir: Path):
@@ -292,10 +286,6 @@ class PerfLock(Monitor):
         return pd.to_numeric(values, errors="coerce")
 
     def stop(self):
-        if self.perf is not None:
-            self.perf.stop()
+        if self.perf_lock is not None:
             self.perf_lock.stop()
-            with open(os.path.join(self.dir, "flamegraph.errors"), "w") as errfile:
-                self.__generate_flamegraph(errfile)
-            with open(os.path.join(self.dir, "lock-contention.errors"), "w") as errfile:
-                self.__generate_lock_contention(errfile)
+            self.__generate_lock_contention()
