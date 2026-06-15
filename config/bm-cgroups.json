@@ -97,13 +97,13 @@
     ],
     "monitors": {
       "perf": [
-
+        "--all-kernel"
       ],
       "perf_stat": [
         "-e",
         "cache-references,cache-misses,faults,cgroup-switches"
       ],
-      "perf_lock" : []
+      "perf_lock": []
     }
   },
   "containers": {
@@ -112,8 +112,7 @@
       "cpu_order": "asc",
       "pack_group": "none",
       "one_cpu_per_core": true
-    },
-    "container_list" : { "values" : [[1, 3, 20]] }
+    }
   },
   "applications": [
     {
