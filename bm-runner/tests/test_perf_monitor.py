@@ -5,14 +5,6 @@ from monitors.perf import FlameGraph
 from config.env_config import UniversalConfig
 
 
-def lock_contention_csv():
-    return """type;caller;contended;wait_total;wait_max;avg_wait
-mutex;mutex_lock;4;2000000;1000000;500000
-spinlock;queued_spin_lock_slowpath;10;12000000;3000000;1200000
-rwsem;down_read;1;500000;500000;500000
-"""
-
-
 def test_arm_spe_event_uses_env_period(monkeypatch):
     monkeypatch.setenv(FlameGraph.ARM_SPE_PERIOD_ENV_VAR_NAME, "20480")
 
