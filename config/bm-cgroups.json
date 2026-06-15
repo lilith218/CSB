@@ -113,7 +113,7 @@
       "pack_group": "none",
       "one_cpu_per_core": true
     },
-    "container_list" : [[]]
+    "container_list" : [[1, 3, 20]]
   },
   "applications": [
     {
