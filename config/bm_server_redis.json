@@ -100,8 +100,7 @@
         "-C",
         "0,1"
       ],
-      "perf_stat": [],
-      "perf_lock": []
+      "perf_stat": []
     }
   },
   "containers": {
