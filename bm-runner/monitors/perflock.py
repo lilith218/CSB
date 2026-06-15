@@ -21,7 +21,7 @@ class PerfLock(Monitor):
     # output: contended; total wait; max wait; avg wait; type; caller
     header = ["contended", "total_wait", "max_wait", "avg_wait", "type", "caller"]
 
-    def __init__(self, output_dir: str, args: list[str] = []):
+    def __init__(self, output_dir: str, args: list[str] = ["-a"]):
         super().__init__(dir=output_dir, args=args)
         self.name = "perf-lock"
         self.perf_lock_data = f"{self.name}.data"

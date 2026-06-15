@@ -97,13 +97,20 @@
     ],
     "monitors": {
       "perf": [
+        "-C",
+        "0",
         "--all-kernel"
       ],
       "perf_stat": [
+        "-C",
+        "0",
         "-e",
         "cache-references,cache-misses,faults,cgroup-switches"
       ],
-      "perf_lock": []
+      "perf_lock": [
+        "-C",
+        "0"
+      ]
     }
   },
   "containers": {
