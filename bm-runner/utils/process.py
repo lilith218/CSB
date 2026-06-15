@@ -11,7 +11,7 @@ from bm_utils import stop_process
 
 
 class BackgroundProcess:
-    TIMEOUT_SEC = 30
+    TIMEOUT_SEC = 5
     Env = {"LANG": "en_US.UTF-8", "LC_ALL": "en_US.UTF-8"}
 
     def __init__(
@@ -129,7 +129,7 @@ class BackgroundProcess:
         )
         self.process.wait()
 
-    def stop(self):
+    def stop(self, timeout=TIMEOUT_SEC):
         """
         Sends ctrl+c signal to the process if it is still running.
         On timeout the process will be terminated.
@@ -139,7 +139,7 @@ class BackgroundProcess:
         bm_log(f"[{self.name}] stopping")
         self.process.send_signal(signal.SIGINT)
         try:
-            self.process.wait(self.TIMEOUT_SEC)
+            self.process.wait(timeout)
             bm_log(f"[{self.name}] stopped with return code {self.process.returncode}")
         except subprocess.TimeoutExpired:
             bm_log(f"{self.name} timeout on exit!", LogType.ERROR)

@@ -55,7 +55,8 @@ class PerfLock(Monitor):
 
     def stop(self):
         if self.perf_lock is not None:
-            self.perf_lock.stop()
+            # perf lock record takes longer time to respond
+            self.perf_lock.stop(timeout=60)
 
     def collect_results(self):
         output = ""
