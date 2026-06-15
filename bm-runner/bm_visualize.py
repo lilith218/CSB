@@ -87,6 +87,12 @@ class PlotChart:
                 legend=False,
             )
 
+        # calculate maximum length of x values
+        max_len = max(len(str(x)) for x in df[plot.x])
+        # rotate the xticks to avoid overlap of string
+        if max_len > 10:
+            plt.xticks(rotation=90)
+
         chart.set(xlabel=plot.x_lbl, ylabel=plot.y_lbl)
         chart.grid(True)
         new_ylim = 1.2 * max(df[plot.y])
