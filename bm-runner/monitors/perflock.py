@@ -32,6 +32,7 @@ class PerfLock(Monitor):
             "perf",
             "lock",
             "record",
+            "-g",
             "-e",
             "lock:contention_begin",
             "-e",
