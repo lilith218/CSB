@@ -41,7 +41,6 @@ class PerfLock(Monitor):
         ]
         cmds.extend(args)
 
-        # TODO: check if kernel flags are set
         self.perf_lock = BackgroundProcess(
             name=self.name,
             out_dir=output_dir,
