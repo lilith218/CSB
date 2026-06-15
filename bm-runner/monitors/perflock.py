@@ -61,12 +61,9 @@ class PerfLock(Monitor):
         output = ""
         if self.__run_lock_contention():
             df = read_data_frame_from_csv(self.perf_contention_csv, names=self.header)
-            if df is not None:
+            if df is not None and not df.empty:
                 # dump detailed plot of head results
                 self.__plot(df.head(self.LOCK_CONTENTION_TOP_N))
-                if df is None:
-                    bm_log(f"{self.name} did not produce a valid data-frame", LogType.ERROR)
-                    return ""
                 # summary of all locks per run
                 avg_wait = df["avg_wait"].mean()
                 max_wait = df["max_wait"].max()
@@ -75,6 +72,8 @@ class PerfLock(Monitor):
                 output += f"perf_lock_avg_wait={avg_wait};"
                 output += f"perf_lock_max_wait={max_wait};"
                 output += f"perf_lock_total_wait={total_wait};"
+            else:
+                bm_log(f"{self.name} did not produce a valid data-frame", LogType.ERROR)
         return output
 
     def __run_lock_contention(self) -> bool:
