@@ -69,6 +69,26 @@
       "hue_lbl": "Execution Env",
       "title": "cgroup-switches vs. #Containers",
       "shape": "barplot"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "perf_lock_avg_wait",
+      "y_lbl": "Average wait of all locks",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "Lock avg wait vs. #Containers",
+      "shape": "barplot"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Containers",
+      "y": "perf_lock_total_wait",
+      "y_lbl": "Total wait of all locks",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "Lock avg wait vs. #Containers",
+      "shape": "barplot"
     }
   ],
   "benchmark_config": {

@@ -56,9 +56,6 @@ class PerfLock(Monitor):
         self.perf_lock.start()
 
     def collect_results(self):
-        VALUE_COL = self.TARGET_METRIC
-        KEY_COL = "caller"
-        INFO_COL = "type"
         output = ""
         if self.__run_lock_contention():
             df = read_data_frame_from_csv(self.perf_contention_csv, names=self.header)
@@ -66,14 +63,13 @@ class PerfLock(Monitor):
             if df is None:
                 bm_log(f"{self.name} did not produce a valid data-frame", LogType.ERROR)
                 return ""
-            for _, row in df.iterrows():
-                value = row[VALUE_COL]
-                key = row[KEY_COL]
-                info = row[INFO_COL]
-                if pd.notna(value) and pd.api.types.is_number(value):
-                    output += f"{key}_{info}={value};"
-                else:
-                    bm_log(f"{self.name} could not read a valid value for {key}", LogType.ERROR)
+            avg_wait = df["avg_wait"].mean()
+            max_wait      = df["max_wait"].max()
+            total_wait    = df["total_wait"].sum()
+
+            output += f"perf_lock_avg_wait={avg_wait};"
+            output += f"perf_lock_max_wait={max_wait};"
+            output += f"perf_lock_total_wait={total_wait};"
         return output
 
     def __run_lock_contention(self) -> bool:
@@ -100,7 +96,7 @@ class PerfLock(Monitor):
 
     def __plot(self, df:pd.DataFrame):
         subject = "avg_wait"
-        cfg = PlotConfig(y=subject, x="caller", hue="type")
+        cfg = PlotConfig(y=subject, x="caller", hue="type", shape="barplot")
         plot_chart(cfg, df, os.path.join(self.dir, "lock-contention"))
 
     def stop(self):
