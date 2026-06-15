@@ -169,6 +169,6 @@ class FlameGraph(Monitor):
 
     def stop(self):
         if self.perf is not None:
-            self.perf.stop()
+            self.perf.stop(timeout=30)
             with open(os.path.join(self.dir, "flamegraph.errors"), "w") as errfile:
                 self.__generate_flamegraph(errfile)

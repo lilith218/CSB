@@ -136,13 +136,13 @@ class BackgroundProcess:
         """
         if self.process is None:
             return
-        bm_log(f"[{self.name}] stopping")
+        bm_log(f"[{self.name}] stopping, timeout given {timeout}s")
         self.process.send_signal(signal.SIGINT)
         try:
             self.process.wait(timeout)
             bm_log(f"[{self.name}] stopped with return code {self.process.returncode}")
         except subprocess.TimeoutExpired:
-            bm_log(f"{self.name} timeout on exit!", LogType.ERROR)
+            bm_log(f"[{self.name}] timeout on exit!", LogType.ERROR)
             self.__terminate()
         finally:
             self.__terminate()
