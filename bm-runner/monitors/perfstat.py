@@ -50,17 +50,19 @@ class PerfStat(Monitor):
         output = ""
 
         if self.stat:
-            # header row is based on `man perf stat` CSV FORMAT section
-            # We are interested in metric_value
-            VALUE_COL = "metric_value"
+            # header row is based on `man perf stat` CSV FORMAT section.
+            # Event counters are in counter_value; metric_value is optional
+            # and is blank for ordinary events such as cache-misses.
+            COUNTER_COL = "counter_value"
+            METRIC_COL = "metric_value"
             KEY_COL = "event"
             header = [
-                "counter_value",
+                COUNTER_COL,
                 "unit",
                 KEY_COL,
                 "runtime",
                 "percentage",
-                VALUE_COL,
+                METRIC_COL,
                 "metric_unit",
             ]
             df = read_data_frame_from_csv(
@@ -71,13 +73,15 @@ class PerfStat(Monitor):
                 bm_log(f"{self.name} did not produce a valid data-frame", LogType.ERROR)
                 return ""
             for _, row in df.iterrows():
-                value = row[VALUE_COL]
+                value = pd.to_numeric(row[COUNTER_COL], errors="coerce")
+                if pd.isna(value):
+                    value = pd.to_numeric(row[METRIC_COL], errors="coerce")
                 key = row[KEY_COL]
                 # on some machines e.g. CI, monitoring some events
                 # is not supported. In that case the value will be `<not supported>`.
                 # Here we want to avoid adding meaningless values to the final CSV,
                 # so we skip adding those with value N/A or not a number.
-                if pd.notna(value) and pd.api.types.is_number(value):
+                if pd.notna(value):
                     output += f"{key}={value};"
                 else:
                     bm_log(f"{self.name} could not read a valid value for {key}", LogType.ERROR)

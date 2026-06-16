@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 from monitors.perf import FlameGraph
+from monitors.perfstat import PerfStat
 from config.env_config import UniversalConfig
+from types import SimpleNamespace
 
 
 def test_arm_spe_event_uses_env_period(monkeypatch):
@@ -69,3 +71,37 @@ def test_perf_events_include_arm_spe_when_sysfs_device_has_type(monkeypatch, tmp
         "arm_spe/jitter=1,period=10240/",
         "-a",
     ]
+
+
+def test_perf_stat_collects_counter_values_when_metric_values_are_empty(tmp_path):
+    output = tmp_path / "perf-stat"
+    output.write_text(
+        "# started on Tue Jun 16 15:09:16 2026\n"
+        "\n"
+        "2038.59;msec;cpu-clock;2038592268;100.00;;\n"
+        "676;;context-switches;2038592028;100.00;;\n"
+        "23980289;;cache-misses;1686541168;82.00;;\n"
+        "219;;cgroup-switches;2038577650;100.00;;\n"
+    )
+
+    monitor = PerfStat.__new__(PerfStat)
+    monitor.name = "perf-stat"
+    monitor.stat = SimpleNamespace(output_file_name=str(output))
+
+    assert monitor.collect_results() == (
+        "cpu-clock=2038.59;"
+        "context-switches=676.0;"
+        "cache-misses=23980289.0;"
+        "cgroup-switches=219.0;"
+    )
+
+
+def test_perf_stat_falls_back_to_metric_value(tmp_path):
+    output = tmp_path / "perf-stat"
+    output.write_text(";;instructions;100;100.00;1.25;insn per cycle\n")
+
+    monitor = PerfStat.__new__(PerfStat)
+    monitor.name = "perf-stat"
+    monitor.stat = SimpleNamespace(output_file_name=str(output))
+
+    assert monitor.collect_results() == "instructions=1.25;"
