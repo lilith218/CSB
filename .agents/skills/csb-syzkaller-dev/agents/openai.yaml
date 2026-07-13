@@ -1,6 +1,0 @@
-interface:
-  display_name: "CSB Syzkaller Dev"
-  short_description: "Develop CSB syzkaller generator internals"
-  default_prompt: "Use $csb-syzkaller-dev to debug or modify trace parsing, syz extraction, prog2c, csource, generator templates, Go tooling, or tests."
-policy:
-  allow_implicit_invocation: true
