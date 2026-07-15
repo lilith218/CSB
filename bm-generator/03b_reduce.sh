@@ -2,6 +2,8 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+source helper/bm-generator-lib.sh
+
 : ${DIR_PROG:="./extracted"}
 : ${DIR_OUT:="./reduced"}
 : ${JOBS:=$(nproc)}
@@ -45,6 +47,7 @@ if [ ! -x "${DIR_SYZ_SRC}/bin/syz-prog-reduce" ]; then
 fi
 
 export DIR_SYZ_SRC DIR_PROG_ABS DIR_OUT_ABS MAX_CALLS MAX_MOTIF_INSTANCES MAX_LIVE_RESOURCES KEEP_FIRST KEEP_LAST MOTIF_CONSTS MOTIF_FILENAMES
+export -f normalize_syz_arch read_csb_meta_value prog_target_os prog_target_arch
 
 find "${DIR_PROG_ABS}" -type f -name '*.prog' -print0 | \
   xargs -0 -n 1 -P "${JOBS}" bash -c '
@@ -52,7 +55,11 @@ find "${DIR_PROG_ABS}" -type f -name '*.prog' -print0 | \
     rel="${in#${DIR_PROG_ABS}/}"
     out="${DIR_OUT_ABS}/${rel}"
     mkdir -p "$(dirname "${out}")"
+    prog_os="$(prog_target_os "${in}")"
+    prog_arch="$(prog_target_arch "${in}")"
     "${DIR_SYZ_SRC}/bin/syz-prog-reduce" \
+      -os "${prog_os}" \
+      -arch "${prog_arch}" \
       -prog "${in}" \
       -out "${out}" \
       -max-calls "${MAX_CALLS}" \
