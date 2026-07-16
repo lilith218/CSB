@@ -33,14 +33,22 @@
 	],
 	"benchmark_config" : {
 		"duration": 60,
-		"monitors" : { "mpstat" : ["-n", "-u", "-I", "SCPU,SUM", "-P", "0"],
-			       "perf" : ["-C", "0"]
-			     }
+		"monitors" : {
+					"mpstat" : ["-n", "-u", "-I", "SCPU,SUM", "-P", "0"],
+			       "perf" : ["-C", "0"],
+				   "perf_lock": ["-C", "0"]
+			     },
+		"exec_env" : { "native":[], "bwrap":[], "container":[]}
 	},
 	"containers": {
 		$_begin(META_NAME = [[1]]);
-		"port" : 8000
+		"port" : 8000,
 		$_end();
+		"core_assignment_policy": {
+			"cpu_order": "asc",
+			"pack_group": "none",
+			"one_cpu_per_core": true
+        }
     },
     "applications": [
 $_begin(BINNAME = [[1; 2]]);
