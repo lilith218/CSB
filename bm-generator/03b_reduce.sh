@@ -40,6 +40,11 @@ mkdir -p "${DIR_OUT}"
 DIR_OUT_ABS="`readlink -e ${DIR_OUT}`"
 DIR_PROG_ABS="`readlink -e ${DIR_PROG}`"
 
+if ! find "${DIR_PROG_ABS}" -type f -name '*.prog' -print -quit | grep -q .; then
+  echo "No syzkaller programs found in ${DIR_PROG_ABS}." >&2
+  exit 1
+fi
+
 if [ ! -x "${DIR_SYZ_SRC}/bin/syz-prog-reduce" ]; then
   echo "syz-prog-reduce not found. Try to run:"
   echo "  ./`ls -1 01_*.sh`"
@@ -50,7 +55,7 @@ export DIR_SYZ_SRC DIR_PROG_ABS DIR_OUT_ABS MAX_CALLS MAX_MOTIF_INSTANCES MAX_LI
 export -f normalize_syz_arch read_csb_meta_value prog_target_os prog_target_arch
 
 find "${DIR_PROG_ABS}" -type f -name '*.prog' -print0 | \
-  xargs -0 -n 1 -P "${JOBS}" bash -c '
+  xargs -0 -r -n 1 -P "${JOBS}" bash -c '
     in="$1"
     rel="${in#${DIR_PROG_ABS}/}"
     out="${DIR_OUT_ABS}/${rel}"

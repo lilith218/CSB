@@ -23,6 +23,10 @@ fi
 DIR_PROG_ABS="`readlink -e ${DIR_PROG}`"
 
 files=`find "${DIR_PROG_ABS}" -maxdepth 1 -name '*.prog'`
+if [ -z "${files}" ]; then
+  echo "No syzkaller programs found in ${DIR_PROG_ABS}." >&2
+  exit 1
+fi
 
 SCRIPT_SYZ_SRC="helper/find_syzkaller_src.sh"
  : ${DIR_SYZ_SRC:=$(${SCRIPT_SYZ_SRC})}
