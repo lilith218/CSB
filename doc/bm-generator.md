@@ -135,6 +135,11 @@ cd bm-generator/
 ./06_select.sh
 ```
 
+`01_build.sh` configures a missing CSB build directory automatically. Set
+`DIR_BUILD` to use a build directory other than `../build`. Parsing, extraction,
+and reduction stop with an error when the preceding stage produces no `.prog`
+files, so a failed conversion cannot silently create an empty benchmark set.
+
 `03b_reduce.sh` is optional. To compile reduced programs, run `04_prepare.sh`
 with `DIR_PROG=./reduced`; otherwise `04_prepare.sh` continues to consume
 `./extracted` by default.
