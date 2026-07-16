@@ -33,7 +33,7 @@ class PerfLock(Monitor):
             "record",
             #"-g",
             "--call-graph",
-            "-dwarf",
+            "dwarf",
             "-e",
             "lock:contention_begin",
             "-e",
