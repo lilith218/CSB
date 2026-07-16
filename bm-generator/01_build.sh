@@ -4,6 +4,7 @@
 
 
 GOBIN="`go env GOBIN`"
+ : ${DIR_BUILD:="../build"}
 
 if [ "x${GOBIN}" == "x" ]; then
   echo "Set GOBIN go environment variable and add it to PATH"
@@ -17,10 +18,15 @@ fi
 SCRIPT_SYZ_SRC="helper/find_syzkaller_src.sh"
  : ${DIR_SYZ_SRC:=$(${SCRIPT_SYZ_SRC})}
 
+if [ ! -d "${DIR_BUILD}" ]; then
+  echo "Configuring CSB build directory ..."
+  cmake -S../ -B"${DIR_BUILD}" -DCSB_BM_GENERATOR=ON
+fi
+
 if [ ! -d "${DIR_SYZ_SRC}" ]; then
   echo "syzkaller source dir not found."
   echo "  Building syzkaller with cmake ..."
-  cmake -S../ -B../build -DCSB_BM_GENERATOR=ON
+  cmake -S../ -B"${DIR_BUILD}" -DCSB_BM_GENERATOR=ON
   DIR_SYZ_SRC=$(${SCRIPT_SYZ_SRC})
   if [ ! -d "${DIR_SYZ_SRC}" ]; then
     echo "Failed setting up syzkaller sources."
@@ -30,4 +36,4 @@ if [ ! -d "${DIR_SYZ_SRC}" ]; then
   fi
 fi
 
-cmake --build ../build --target syzkaller
+cmake --build "${DIR_BUILD}" --target syzkaller

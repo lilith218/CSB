@@ -6,6 +6,7 @@ export CSB_RESULTS_GROUP="ls"
 source helper/bm-generator-lib.sh
 echo "STEP#A: Testing architecture metadata helpers ..."
 ./test_arch_metadata.sh
+./test_01_build.sh
 STRACE_LOG="ls_strace.log"
 APP="ls -la /dev"
 ../scripts/plugins/collect_strace.sh ${STRACE_LOG} ${APP}
