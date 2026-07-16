@@ -26,7 +26,12 @@ if DIR_SYZ_SRC="${tmp}/syz" DIR_PROG="${tmp}/empty" DIR_OUT="${tmp}/extract" \
 fi
 
 if DIR_SYZ_SRC="${tmp}/syz" DIR_PROG="${tmp}/empty" DIR_OUT="${tmp}/reduce" \
-    ./03b_reduce.sh; then
-  echo "03b_reduce.sh accepted an empty input directory" >&2
+    ./04_reduce.sh; then
+  echo "04_reduce.sh accepted an empty input directory" >&2
+  exit 1
+fi
+
+if DIR_PROG="${tmp}/empty" ./05_prepare.sh; then
+  echo "05_prepare.sh accepted an empty input directory" >&2
   exit 1
 fi

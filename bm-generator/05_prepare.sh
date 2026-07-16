@@ -4,13 +4,18 @@
 
 source helper/bm-generator-lib.sh
 
- : ${DIR_PROG:="./extracted"}
+ : ${DIR_PROG:="./reduced"}
  : ${JOBS:=$(nproc)}
 
 if [ ! -d "${DIR_PROG}" ]; then
     echo "Directory ${DIR_PROG} does not exist."
     echo "Run scripts with lower numbers first, or specify directory explicitly:"
     echo "  DIR_PROG=\"/path/to/prog/files/\" $0"
+    exit 1
+fi
+
+if ! find "${DIR_PROG}" -type f -name '*.prog' -print -quit | grep -q .; then
+    echo "No reduced syzkaller programs found in ${DIR_PROG}." >&2
     exit 1
 fi
 
@@ -23,4 +28,4 @@ fi
 
 mkdir -p "${DIR_TARGETS}"
 
-find "${DIR_PROG}" -type f -name '*.prog' -print0 | xargs -r -0 -n 1 -P ${JOBS} ./helper/prog2bm.sh
+find "${DIR_PROG}" -type f -name '*.prog' -print0 | xargs -0 -r -n 1 -P ${JOBS} ./helper/prog2bm.sh

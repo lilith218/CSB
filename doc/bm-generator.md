@@ -85,10 +85,10 @@ the following scripts within `bm-generator/`:
 |`01_build.sh`| Builds the syzkaller tools necessary to automatically generate test cases from strace logs. |
 |`02_parse.sh`| Parses an strace log file into the [syzlang][] internal representation of syzkaller. It outputs one [syzlang][] program for each strace log file. Output is stored in `deserialized/0/program_<id1>.prog` |
 |`03_extract.sh`| Analyzes all `deserialized/*/*.prog` [syzlang][] programs. For each input program, a dependency graph for all syscalls is computed. It outputs one [syzlang][] program per dependency graph into `extracted/min_<id2>.prog` |
-|`03b_reduce.sh`| Optionally reduces extracted [syzlang][] programs by dynamically detecting repeated syscall motifs and keeping a dependency-valid representative sample. Output is stored in `reduced/` with the same directory layout as `extracted/`. |
-|`04_prepare.sh`| Processes all `extracted/*.prog` [syzlang][] programs. Each input program is converted into a C header containing a function calling all dependent syscalls from the input [syzlang][] program. Output is stored in `../bench/targets/gen-ws/syz/min_<id3>.h` |
-|`05_generate.sh`| Uses [tmplr][] to generate [bm-runner][] compatible headers and JSON configuration for all generated `../bench/targets/gen-ws/syz/min_<id3>.h` files. Output is stored as `../bench/targets/gen-ws/min_<id3>.h` header and `../../config/gen-ws/fg_min_<id3>.json`. |
-|`06_select.sh`| Runs all the auto-generated benchmarks for a short duration, performs pairwise comparison of the flamegraphs of the benchmark execution, and prints a list of benchmarks that are different enough from each other. |
+|`04_reduce.sh`| Reduces extracted [syzlang][] programs by dynamically detecting repeated syscall motifs and keeping a dependency-valid representative sample. Output is stored in `reduced/` with the same directory layout as `extracted/`. |
+|`05_prepare.sh`| Processes all `reduced/*.prog` [syzlang][] programs. Each input program is converted into a C header containing a function calling all dependent syscalls from the input [syzlang][] program. Output is stored in `../bench/targets/gen-ws/syz/min_<id3>.h` |
+|`06_generate.sh`| Uses [tmplr][] to generate [bm-runner][] compatible headers and JSON configuration for all generated `../bench/targets/gen-ws/syz/min_<id3>.h` files. Output is stored as `../bench/targets/gen-ws/min_<id3>.h` header and `../../config/gen-ws/fg_min_<id3>.json`. |
+|`07_select.sh`| Runs all the auto-generated benchmarks for a short duration, performs pairwise comparison of the flamegraphs of the benchmark execution, and prints a list of benchmarks that are different enough from each other. |
 
 The only script that takes an argument is `02_parse.sh`, which needs a path to an strace log file generated as described below.
 ```bash
@@ -129,10 +129,10 @@ cd bm-generator/
 ./01_build.sh
 ./02_parse.sh strace.log
 ./03_extract.sh
-./03b_reduce.sh
-./04_prepare.sh
-./05_generate.sh
-./06_select.sh
+./04_reduce.sh
+./05_prepare.sh
+./06_generate.sh
+./07_select.sh
 ```
 
 `01_build.sh` configures a missing CSB build directory automatically. Set
@@ -140,9 +140,8 @@ cd bm-generator/
 and reduction stop with an error when the preceding stage produces no `.prog`
 files, so a failed conversion cannot silently create an empty benchmark set.
 
-`03b_reduce.sh` is optional. To compile reduced programs, run `04_prepare.sh`
-with `DIR_PROG=./reduced`; otherwise `04_prepare.sh` continues to consume
-`./extracted` by default.
+Reduction is a required pipeline stage. `05_prepare.sh` consumes the resulting
+`./reduced` programs by default.
 
 Reduction is controlled with environment variables:
 
@@ -162,8 +161,8 @@ Reduction is controlled with environment variables:
 For example:
 
 ```bash
-./03b_reduce.sh
-DIR_PROG=./reduced ./04_prepare.sh
+./04_reduce.sh
+./05_prepare.sh
 ```
 
 Generator scripts intentionally fail on non-empty output directories. This is a
@@ -226,7 +225,7 @@ This directly allows comparing the postprocessed flamegraphs of the autogenerate
 
 To run the benchmarks selection pipeline after generation of the microbenchmarks, you can run:
 ```bash
-./06_select.sh
+./07_select.sh
 ```
 Alternatively, you can use the manual workflow outlined below.
 

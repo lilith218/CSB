@@ -9,11 +9,12 @@ source helper/bm-generator-lib.sh
 
  : ${DIR_DESERIALIZED:="deserialized"}
  : ${DIR_EXTRACTED:="extracted"}
+ : ${DIR_REDUCED:="reduced"}
  : ${DIR_GENERATED_ROOT:="../bench/targets/$(get_workspace_dir)"}
  : ${DIR_CONFIG:="../config/$(get_workspace_dir)"}
  : ${DIR_CSB_BUILD:="../build"}
 
- : ${DIRS_ALL:="${DIR_DESERIALIZED} ${DIR_EXTRACTED} ${DIR_GENERATED_ROOT} ${DIR_CSB_BUILD} ${DIR_CONFIG}"}
+ : ${DIRS_ALL:="${DIR_DESERIALIZED} ${DIR_EXTRACTED} ${DIR_REDUCED} ${DIR_GENERATED_ROOT} ${DIR_CSB_BUILD} ${DIR_CONFIG}"}
  : ${DIRS_DEFAULT:="${DIR_GENERATED_ROOT} ${DIR_CONFIG}"}
  : ${DIRS:=${DIRS_DEFAULT}}
 
