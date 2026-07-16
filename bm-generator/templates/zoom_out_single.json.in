@@ -44,6 +44,7 @@
 		$_begin(META_NAME = [[1]]);
 		"port" : 8000,
 		$_end();
+		"container_list": {"values": [[100]]},
 		"core_assignment_policy": {
 			"cpu_order": "asc",
 			"pack_group": "none",
