@@ -110,6 +110,7 @@ class BenchmarkConfig(dict):
     def __resolve_monitor_dependency(
         monitors: dict[MonitorType, list[str]],
     ) -> dict[MonitorType, list[str]]:
+
         if MonitorType.PERF_LOCK not in monitors:
             return monitors
 
@@ -122,7 +123,7 @@ class BenchmarkConfig(dict):
             return monitors
 
         perf_args = list(monitors.get(MonitorType.PERF, []))
-        perf_args.extend(PerfLock.REQUIRED_EVENTS)
+        perf_args.extend(PerfLock.get_args())
         perf_args.extend(monitors[MonitorType.PERF_LOCK])
 
         resolved_monitors: dict[MonitorType, list[str]] = {}

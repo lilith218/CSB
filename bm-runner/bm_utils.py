@@ -399,11 +399,15 @@ def get_block_devices() -> list[str]:
 
 
 def is_perf_event_supported(event_name: str) -> bool:
-    return (
-        subprocess.run(
-            ["perf", "stat", "-e", event_name, "true"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        ).returncode
-        == 0
-    )
+    try:
+        return (
+            subprocess.run(
+                ["sudo", "perf", "stat", "-e", event_name, "true"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            ).returncode
+            == 0
+        )
+    except Exception:
+        # if perf is not installed an exception can occur.
+        return False
