@@ -120,7 +120,7 @@ Monitors are used to monitor performance. They can be used to analyze the behavi
 - `"redis_benchmark"`:  parses the output of redis_benchmark.
 - `"sar_net"`:  monitors network traffic.
 - `"perf_stat"`:  Runs perf stat.
-- `"perf_lock"`:  Runs perf lock, and perf lock contention if supported. Lock-contention output is generated when the kernel exposes the required `perf lock` trace-points. Running `perf_lock` together with `perf` monitor can corrupt the `perf` monitor results.
+- `"perf_lock"`:  Runs perf lock, and perf lock contention if supported. Lock-contention output is generated when the kernel exposes the required `perf lock` trace-points. Note that `perf_lock` monitor invokes `perf` monitor even if it was not added by the user.
 - `"bpftrace"`:  Runs [bpftrace](https://bpftrace.org/docs/release_025/stdlib) with the given programs. Users may list programs from scripts/bpftrace. Giving multiple programs as arguments, will result in launching multiple instances of bpftrace.
 ## PlotType
 Supported types of plots.  <br/>Supported values:
