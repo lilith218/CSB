@@ -58,5 +58,9 @@ class EnvUniversalConfig:
             return False
 
     @staticmethod
+    def is_off(env_var: UniversalConfig) -> bool:
+        return not EnvUniversalConfig.is_on(env_var)
+
+    @staticmethod
     def get(env_var: UniversalConfig) -> Optional[str]:
         return os.getenv(env_var.value)

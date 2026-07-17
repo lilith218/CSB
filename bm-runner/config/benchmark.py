@@ -113,7 +113,7 @@ class BenchmarkConfig(dict):
     ) -> dict[MonitorType, list[str]]:
 
         if (
-            EnvUniversalConfig.is_on(UniversalConfig.CSB_ANALYZE)
+            EnvUniversalConfig.is_off(UniversalConfig.CSB_ANALYZE)
             or MonitorType.PERF_LOCK not in monitors
         ):
             return monitors
