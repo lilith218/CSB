@@ -1,3 +1,6 @@
+# Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
+# SPDX-License-Identifier: MIT
+
 from config.benchmark import BenchmarkConfig
 from config.benchmark import MonitorType
 from monitors.perflock import PerfLock
