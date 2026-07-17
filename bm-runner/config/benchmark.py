@@ -6,6 +6,7 @@ from typing import Optional
 from config.list import ListConfig
 from monitors.perflock import PerfLock
 from utils.logger import bm_log, LogType
+from config.env_config import EnvUniversalConfig, UniversalConfig
 
 
 class ExecutionType(str, Enum):
@@ -111,7 +112,10 @@ class BenchmarkConfig(dict):
         monitors: dict[MonitorType, list[str]],
     ) -> dict[MonitorType, list[str]]:
 
-        if MonitorType.PERF_LOCK not in monitors:
+        if (
+            EnvUniversalConfig.is_on(UniversalConfig.CSB_ANALYZE)
+            or MonitorType.PERF_LOCK not in monitors
+        ):
             return monitors
 
         if not PerfLock.is_supported():
