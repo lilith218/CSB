@@ -39,7 +39,10 @@ class FlameGraph(Monitor):
 
     @classmethod
     def perf_record_cmd(cls, args: list[str]) -> list[str]:
-        cmds = ["sudo", "perf", "record", "-g"]
+        cmds = ["sudo", "perf", "record", "-g",
+                "-e", "lock:contention_begin",
+                "-e", "lock:contention_end"
+                ]
         if not cls.arm_spe_enabled_and_supported():
             cmds.extend(["-F", "99"])
         for event in cls.perf_events():
