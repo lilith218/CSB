@@ -24,15 +24,14 @@ class PerfLock(Monitor):
     def __init__(self, output_dir: str, args: list[str] = ["-a"]):
         super().__init__(dir=output_dir, args=args)
         self.name = "perf-lock"
-        self.perf_lock_data = f"{self.name}.data"
+        self.perf_lock_data = f"perf.data"
         self.perf_contention_csv = os.path.join(self.dir, self.LOCK_CONTENTION_CSV)
         cmds = [
             "sudo",
             "perf",
             "lock",
             "record",
-            #"-g",
-            "--call-graph",
+            "-g",
             "dwarf",
             "-e",
             "lock:contention_begin",
@@ -43,21 +42,23 @@ class PerfLock(Monitor):
         ]
         cmds.extend(args)
 
-        self.perf_lock = BackgroundProcess(
-            name=self.name,
-            out_dir=output_dir,
-            cmds=cmds,
-            requires=["perf"],
-            pin=self.get_cpus(),
-        )
+        # self.perf_lock = BackgroundProcess(
+        #     name=self.name,
+        #     out_dir=output_dir,
+        #     cmds=cmds,
+        #     requires=["perf"],
+        #     pin=self.get_cpus(),
+        # )
 
     def start(self):
-        self.perf_lock.start()
+        pass
+        # self.perf_lock.start()
 
     def stop(self):
-        if self.perf_lock is not None:
-            # perf lock record takes longer time to respond
-            self.perf_lock.stop(timeout=60)
+        pass
+        # if self.perf_lock is not None:
+        #     # perf lock record takes longer time to respond
+        #     self.perf_lock.stop(timeout=60)
 
     def collect_results(self):
         output = ""
