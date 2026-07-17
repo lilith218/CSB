@@ -97,12 +97,36 @@ class BenchmarkConfig(dict):
         self.duration = duration
         self.repeat = repeat
         self.exec_env = exec_env
-        self.monitors = monitors
+        self.__resolve_monitor_dependency(monitors)
         self.threads = (
             ListConfig.from_dict(threads).get_list()
             if threads is not None
             else ListConfig([[1]]).get_list()
         )
+
+
+    def __resolve_monitor_dependency(self,  monitors: dict[MonitorType, list[str]]):
+
+        if MonitorType.PERF_LOCK in monitors:
+
+            perf_args = list(monitors.get(MonitorType.PERF, []))
+            # TODO: check if these exist first!
+            perf_args.extend([
+                "-e", "lock:contention_begin",
+                "-e", "lock:contention_end"
+            ])
+            perf_args.extend(monitors[MonitorType.PERF_LOCK])
+
+            dep_monitors : dict[MonitorType, list[str]] = {}
+            dep_monitors[MonitorType.PERF] = perf_args
+            dep_monitors[MonitorType.PERF_LOCK] = monitors[MonitorType.PERF_LOCK]
+
+            for k, v in monitors.items():
+                if k not in {MonitorType.PERF, MonitorType.PERF_LOCK}:
+                    dep_monitors[k] = v
+            self.monitors = dep_monitors
+        else:
+            self.monitors = monitors
 
     def get_exec_env_args(self, exec_type: ExecutionType) -> list[str]:
         return self.exec_env.get(exec_type, [])

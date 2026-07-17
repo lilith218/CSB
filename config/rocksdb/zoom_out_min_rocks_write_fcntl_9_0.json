@@ -33,7 +33,9 @@
   ],
   "benchmark_config": {
     "duration": 60,
+
     "monitors": {
+
       "mpstat": [
         "-n",
         "-u",
@@ -42,26 +44,27 @@
         "-P",
         "0"
       ],
-      "perf": [
-        "-C",
-        "0"
-      ],
+
       "perf_lock": [
         "-C",
         "0"
+      ],
+
+      "perf": [
+        "-C",
+        "0"
       ]
+
     },
     "exec_env": {
-      "container": [],
-      "bwrap": [],
-      "native": []
+      "container": []
     }
   },
   "containers": {
     "container_list": {
       "values": [
         [
-          1, 100
+          10
         ]
       ]
     },
