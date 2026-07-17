@@ -52,14 +52,16 @@
       ]
     },
     "exec_env": {
-      "container": []
+      "container": [],
+      "bwrap": [],
+      "native": []
     }
   },
   "containers": {
     "container_list": {
       "values": [
         [
-          3
+          1, 100
         ]
       ]
     },
