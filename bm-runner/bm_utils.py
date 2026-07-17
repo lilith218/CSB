@@ -16,6 +16,7 @@ from benchkit.utils.types import PathType
 from utils.bm_builder import Builder
 import pandas as pd
 from typing import Any
+import subprocess
 
 
 def resolve_path(path: PathType, use_in_container: bool = False) -> PathType:
@@ -395,3 +396,14 @@ def get_block_devices() -> list[str]:
         device_list = [f"/dev/{device}" for device in output.splitlines()]
 
     return device_list
+
+
+def is_perf_event_supported(event_name: str) -> bool:
+    return (
+        subprocess.run(
+            ["perf", "stat", "-e", event_name, "true"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ).returncode
+        == 0
+    )
