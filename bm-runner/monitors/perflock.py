@@ -9,6 +9,7 @@ from benchkit.shell.shell import shell_out
 from bm_utils import read_data_frame_from_csv
 from visual.plotchart import PlotConfig, PlotChart
 from bm_utils import is_perf_event_supported
+from monitors.perf import FlameGraph
 
 
 class PerfLock(Monitor):
@@ -26,7 +27,6 @@ class PerfLock(Monitor):
     def __init__(self, output_dir: str, args: list[str] = ["-a"]):
         super().__init__(dir=output_dir, args=args)
         self.name = "perf-lock"
-        self.perf_lock_data = "perf.data"  # TODO: read it from perf
         self.perf_contention_csv = os.path.join(self.dir, self.LOCK_CONTENTION_CSV)
 
     def start(self):
@@ -77,15 +77,15 @@ class PerfLock(Monitor):
             "-k",  # sort by average wait
             self.TARGET_METRIC,
             "-i",  # input file is the output of `perf lock record`
-            self.perf_lock_data,
+            FlameGraph.DATA_FILE,
             "-x",  # output report should be a CSV with `;` as delimiter
             ";",
             "--output",
             self.perf_contention_csv,
         ]
-        if not os.path.exists(os.path.join(self.dir, self.perf_lock_data)):
+        if not os.path.exists(os.path.join(self.dir, FlameGraph.DATA_FILE)):
             bm_log(
-                f"{self.name} Could not find {self.perf_lock_data} in {self.dir}!", LogType.ERROR
+                f"{self.name} Could not find {FlameGraph.DATA_FILE} in {self.dir}!", LogType.ERROR
             )
             return False
         try:

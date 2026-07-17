@@ -19,6 +19,7 @@ class FlameGraph(Monitor):
     ARM_SPE_MIN_INTERVAL_GLOB = "/sys/bus/event_source/devices/arm_spe*/caps/min_interval"
     ARM_SPE_FALLBACK_MIN_INTERVAL = 1024
     ARM_SPE_PERIOD_MULTIPLIER = 10
+    DATA_FILE = "perf.data"
 
     def __init__(self, output_dir: str, args: list[str] = ["-a"]):
         super().__init__(dir=output_dir, args=args)
@@ -132,11 +133,11 @@ class FlameGraph(Monitor):
 
     def __generate_flamegraph(self, errfile):
         """
-        Generates flamegraph on perf.data in output dir
+        Generates flamegraph on perf data in output dir
         """
-        # run perf script on the perf.data in results folder
+        # run perf script on the perf data in results folder
         perf = subprocess.Popen(
-            ["sudo", "perf", "script", "-i", "perf.data"],
+            ["sudo", "perf", "script", "-i", self.DATA_FILE],
             cwd=self.dir,
             stdout=subprocess.PIPE,
             stderr=errfile,
