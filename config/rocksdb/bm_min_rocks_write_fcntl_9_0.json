@@ -56,12 +56,8 @@
     "container_list": {
       "values": [
         [
-          1
-        ],
-        {
-          "min": 5,
-          "max": 30
-        }
+          1, 5, 30
+        ]
       ]
     },
     "core_count": 1
