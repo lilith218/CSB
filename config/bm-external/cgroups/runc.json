@@ -181,7 +181,14 @@
       "pack_group": "none",
       "one_cpu_per_core": true
     },
-    "container_list": {"values": [[1, 100]]}
+    "container_list": {
+      "values": [
+        [
+          1,
+          100
+        ]
+      ]
+    }
   },
   "applications": [
     {
