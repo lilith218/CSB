@@ -248,7 +248,7 @@ def split_data_frame(df: DataFrame) -> dict:
     return frames
 
 
-def create_mean_plot(df: DataFrame, plot: PlotConfig, dir):
+def create_mean_plot(df: DataFrame, plot: PlotConfig, dir) -> Optional[str]:
     return PlotChart.plot(
         plot=plot,
         df=df,
@@ -258,7 +258,7 @@ def create_mean_plot(df: DataFrame, plot: PlotConfig, dir):
     )
 
 
-def create_linearity_plot(df: DataFrame, plot: PlotConfig, dir):
+def create_linearity_plot(df: DataFrame, plot: PlotConfig, dir) -> Optional[str]:
     count_col: str = plot.x  # e.g. container count
     subject_col: str = plot.y  # e.g. throughput
     group_col: str = plot.hue  # e.g. execution env native/container
