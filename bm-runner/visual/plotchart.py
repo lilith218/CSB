@@ -17,7 +17,7 @@ class PlotChart:
         self.fig = plt.figure(dpi=150)
         self.chart = self.fig.add_subplot()
         self.chart.set_title(plot.title)
-        self.error: bool = False
+        self.plots_count: int = 0
 
     def add(
         self,
@@ -43,7 +43,6 @@ class PlotChart:
             or PlotChart.__col_empty(df, plot.y, plot.title)
             or PlotChart.__col_empty(df, plot.x, plot.title)
         ):
-            self.error = True
             return False
 
         chart = sns_plot_fun(
@@ -93,11 +92,12 @@ class PlotChart:
             borderaxespad=0.3,
             fontsize=4.5,
         )
+        self.plots_count += 1
         return True
 
     def save(self, out_fig_name, gen_pdf: bool = False) -> Optional[str]:
-        if self.error:
-            bm_log(f"Cannot save plot {out_fig_name}", LogType.ERROR)
+        if self.plots_count == 0:
+            bm_log(f"Will not save plot {out_fig_name}. It is empty", LogType.ERROR)
             return None
         self.fig.set_size_inches(w=10, h=8)
         self.fig.tight_layout()
@@ -144,4 +144,6 @@ class PlotChart:
         pc = PlotChart(plot)
         if pc.add(plot, df, add_points=add_points, **kwargs):
             return pc.save(out_fig_name, gen_pdf)
-        return None
+        else:
+            plt.close()
+            return None
