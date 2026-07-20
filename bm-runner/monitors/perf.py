@@ -10,6 +10,7 @@ from bm_utils import resolve_path
 from utils.logger import bm_log, LogType
 from utils.process import BackgroundProcess
 from config.env_config import EnvUniversalConfig, UniversalConfig
+from benchkit.shell.shell import shell_out
 
 
 class FlameGraph(Monitor):
@@ -134,8 +135,11 @@ class FlameGraph(Monitor):
         Generates flamegraph on perf data in output dir
         """
         # run perf script on the perf data in results folder
+        cmd = ["sudo", "perf", "script", "-i", self.DATA_FILE]
+        if self.__perf_data_has_tracepoints():
+            cmd.extend(["-F", "trace:"])
         perf = subprocess.Popen(
-            ["sudo", "perf", "script", "-i", self.DATA_FILE, "-F", "trace:"],
+            cmd,
             cwd=self.dir,
             stdout=subprocess.PIPE,
             stderr=errfile,
@@ -176,3 +180,21 @@ class FlameGraph(Monitor):
             self.perf.stop(timeout=30)
             with open(os.path.join(self.dir, "flamegraph.errors"), "w") as errfile:
                 self.__generate_flamegraph(errfile)
+
+    def __perf_data_has_tracepoints(self) -> bool:
+        cmd = [
+            "sudo",
+            "perf",
+            "evlist",
+            "-i",
+            self.DATA_FILE,
+        ]
+        try:
+            result = shell_out(cmd, current_dir=self.dir)
+
+            return any(
+                event.startswith("lock:") or event.startswith("tracepoint:")
+                for event in result.split()
+            )
+        except Exception:
+            return False
