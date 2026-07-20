@@ -50,7 +50,18 @@ class FlameGraph(Monitor):
         for event in cls.perf_events():
             cmds.extend(["-e", event])
         cmds.extend(args)
-        return cmds
+        return cls.__sanitize_args(args)
+
+    @classmethod
+    def __sanitize_args(cls, args: list[str]) -> list[str]:
+        forbidden = "-F"
+        bm_log(f"before {args}", LogType.FATAL)
+        if any(item.startswith(("lock:", "tracepoint:")) for item in args):
+            while forbidden in args:
+                idx = args.index(forbidden)
+                del args[idx:min(idx+2, len(args))]
+        bm_log(f"after {args}", LogType.FATAL)
+        return args
 
     @classmethod
     def perf_events(cls) -> list[str]:
