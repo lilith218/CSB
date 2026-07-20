@@ -46,8 +46,6 @@ class FlameGraph(Monitor):
             "record",
             "-g",
         ]
-        # if not cls.arm_spe_enabled_and_supported():
-        #    cmds.extend(["-F", "99"])
         for event in cls.perf_events():
             cmds.extend(["-e", event])
         cmds.extend(args)
