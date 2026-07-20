@@ -111,7 +111,10 @@ class BenchmarkConfig(dict):
     def __resolve_monitor_dependency(
         monitors: dict[MonitorType, list[str]],
     ) -> dict[MonitorType, list[str]]:
-
+        """
+        Enforces the right order of monitors, if there is a dependency
+        between monitors, e.g. `perf_lock` must occur after `perf`.
+        """
         if (
             EnvUniversalConfig.is_off(UniversalConfig.CSB_ANALYZE)
             or MonitorType.PERF_LOCK not in monitors

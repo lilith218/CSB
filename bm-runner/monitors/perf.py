@@ -54,6 +54,9 @@ class FlameGraph(Monitor):
 
     @classmethod
     def perf_events(cls) -> list[str]:
+        # Restrict frequency sampling to the cycles event.
+        # Avoid using a global '-F 99', as tracepoint events (e.g. lock contention)
+        # should be recorded on every occurrence rather than being frequency sampled.
         events = ["cycles/freq=99/"]
         if cls.arm_spe_enabled_and_supported():
             events.append(cls.arm_spe_event())
@@ -136,6 +139,11 @@ class FlameGraph(Monitor):
         """
         # run perf script on the perf data in results folder
         cmd = ["sudo", "perf", "script", "-i", self.DATA_FILE]
+        # If the recording contains tracepoint events, suppress them in the
+        # perf script output so they are not included in the FlameGraph.
+        # This leaves hardware sampling events (e.g. cycles) available for
+        # stackcollapse-perf.pl while preserving the tracepoints in perf.data
+        # for other analyses such as `perf lock contention`.
         if self.__perf_data_has_tracepoints():
             cmd.extend(["-F", "trace:"])
         perf = subprocess.Popen(
