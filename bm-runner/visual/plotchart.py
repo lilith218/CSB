@@ -9,14 +9,15 @@ from pandas import DataFrame
 from utils.logger import LogType, bm_log
 import seaborn as sns
 from pathlib import Path
+from typing import Optional
 
 
 class PlotChart:
     def __init__(self, plot: PlotConfig):
         self.fig = plt.figure(dpi=150)
-
         self.chart = self.fig.add_subplot()
         self.chart.set_title(plot.title)
+        self.error: bool = False
 
     def add(
         self,
@@ -24,7 +25,7 @@ class PlotChart:
         df: DataFrame,
         add_points: bool = False,
         **kwargs,
-    ):
+    ) -> bool:
         args = dict(kwargs)
         # prep hue, we want to generate enough colors
         cnt = df[plot.hue].nunique()
@@ -42,7 +43,8 @@ class PlotChart:
             or PlotChart.__col_empty(df, plot.y, plot.title)
             or PlotChart.__col_empty(df, plot.x, plot.title)
         ):
-            return
+            self.error = True
+            return False
 
         chart = sns_plot_fun(
             ax=self.chart,
@@ -91,9 +93,12 @@ class PlotChart:
             borderaxespad=0.3,
             fontsize=4.5,
         )
+        return True
 
-    def save(self, out_fig_name, gen_pdf: bool = False) -> str:
-
+    def save(self, out_fig_name, gen_pdf: bool = False) -> Optional[str]:
+        if self.error:
+            bm_log(f"Cannot save plot {out_fig_name}", LogType.ERROR)
+            return None
         self.fig.set_size_inches(w=10, h=8)
         self.fig.tight_layout()
 
@@ -135,7 +140,8 @@ class PlotChart:
         add_points: bool = False,
         gen_pdf: bool = False,
         **kwargs,
-    ) -> str:
+    ) -> Optional[str]:
         pc = PlotChart(plot)
-        pc.add(plot, df, add_points=add_points, **kwargs)
-        return pc.save(out_fig_name, gen_pdf)
+        if pc.add(plot, df, add_points=add_points, **kwargs):
+            return pc.save(out_fig_name, gen_pdf)
+        return None

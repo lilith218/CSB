@@ -15,6 +15,7 @@ from visual.plotchart import PlotChart
 from monitors.bpftrace import BpfTrace
 from visual.report import Report
 from bm_utils import read_data_frame_from_csv
+from typing import Optional
 import copy
 
 
@@ -36,7 +37,7 @@ def add_info_tbl(df, report: Report, result_file: str):
 
 
 ###########################################################################
-def create_success_rate_plot(org_df, config: PlotConfig, dir) -> str:
+def create_success_rate_plot(org_df, config: PlotConfig, dir) -> Optional[str]:
     prefix = config.y
     count_col = f"{prefix}_count"
     succ_col = f"{prefix}_succ_count"
@@ -56,7 +57,7 @@ def create_success_rate_plot(org_df, config: PlotConfig, dir) -> str:
 
 
 ###########################################################################
-def create_min_max_avg_plot(org_df, config: PlotConfig, dir: str) -> str:
+def create_min_max_avg_plot(org_df, config: PlotConfig, dir: str) -> Optional[str]:
     """
     Treats `config.y` as a prefix and look for min, max, and avg values
     It assumes such columns exist in the dataframe <config.y>min,
@@ -156,7 +157,7 @@ def create_min_max_avg_plot(org_df, config: PlotConfig, dir: str) -> str:
 
 
 ###########################################################################
-def create_plot(df, plot: PlotConfig, dir, info: str) -> str:
+def create_plot(df, plot: PlotConfig, dir, info: str) -> Optional[str]:
     plot = copy.deepcopy(plot)
     plot.fname += f"_{info}"
     match plot.type:
