@@ -26,28 +26,39 @@ class PlotChart:
         add_points: bool = False,
         **kwargs,
     ) -> bool:
+
+        if (
+            not PlotChart.__col_exists(df, plot.y, plot.title)
+            or not PlotChart.__col_exists(df, plot.x, plot.title)
+            or not PlotChart.__col_exists(df, plot.hue, plot.title)
+        ):
+            return False
+
+        required_cols = [plot.x, plot.y, plot.hue]
+        # this will drop all rows with missing values
+        plot_df = df.dropna(subset=required_cols)
+
+        if plot_df.empty:
+            bm_log(
+                f"Cannot plot {plot.title}: no complete rows for "
+                f"'{plot.x}', '{plot.y}', and '{plot.hue}'",
+                LogType.ERROR,
+            )
+            return False
+
         args = dict(kwargs)
         # prep hue, we want to generate enough colors
-        cnt = df[plot.hue].nunique()
-        sorted_gp = sorted(df[plot.hue].unique())
+        cnt = plot_df[plot.hue].nunique()
+        sorted_gp = sorted(plot_df[plot.hue].unique())
         if isinstance(plot.palette, str):
             palette = sns.color_palette(palette=plot.palette, n_colors=cnt)
         else:
             palette = plot.palette
         sns_plot_fun = getattr(sns, plot.shape)
 
-        if (
-            not PlotChart.__col_exists(df, plot.y, plot.title)
-            or not PlotChart.__col_exists(df, plot.x, plot.title)
-            or not PlotChart.__col_exists(df, plot.hue, plot.title)
-            or PlotChart.__col_empty(df, plot.y, plot.title)
-            or PlotChart.__col_empty(df, plot.x, plot.title)
-        ):
-            return False
-
         chart = sns_plot_fun(
             ax=self.chart,
-            data=df,
+            data=plot_df,
             palette=palette,
             x=plot.x,
             hue=plot.hue,
@@ -55,13 +66,14 @@ class PlotChart:
             y=plot.y,
             **args,
         )
+
         if add_points:
             sns.scatterplot(
                 x=plot.x,
                 y=plot.y,
                 hue=plot.hue,
                 markers=plot.hue,
-                data=df,
+                data=plot_df,
                 hue_order=sorted_gp,
                 palette=palette,
                 ax=chart,
@@ -69,14 +81,14 @@ class PlotChart:
             )
 
         # calculate maximum length of x values
-        max_len = max(len(str(x)) for x in df[plot.x])
+        max_len = max(len(str(x)) for x in plot_df[plot.x])
         # rotate the xticks to avoid overlap of string
         if max_len > 10:
             plt.xticks(rotation=90)
 
         chart.set(xlabel=plot.x_lbl, ylabel=plot.y_lbl)
         chart.grid(True)
-        new_ylim = 1.2 * pd.to_numeric(df[plot.y], errors="coerce").dropna().max()
+        new_ylim = 1.2 * pd.to_numeric(plot_df[plot.y], errors="coerce").dropna().max()
         if np.isfinite(new_ylim):
             chart.set_ylim(0, 1 if new_ylim == 0 else new_ylim)
         else:
@@ -121,16 +133,6 @@ class PlotChart:
             )
             return False
         return True
-
-    @staticmethod
-    def __col_empty(df: DataFrame, col: str, title: str) -> bool:
-        if df.empty:
-            bm_log(f"Cannot plot {title}, empty dataframe provided", LogType.ERROR)
-            return True
-        if df[col].isna().all():
-            bm_log(f"Cannot plot {title}: column '{col}' contains no data", LogType.ERROR)
-            return True
-        return False
 
     @staticmethod
     def plot(
