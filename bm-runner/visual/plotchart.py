@@ -39,6 +39,8 @@ class PlotChart:
             not PlotChart.__col_exists(df, plot.y, plot.title)
             or not PlotChart.__col_exists(df, plot.x, plot.title)
             or not PlotChart.__col_exists(df, plot.hue, plot.title)
+            or PlotChart.__col_empty(df, plot.y, plot.title)
+            or PlotChart.__col_empty(df, plot.x, plot.title)
         ):
             return
 
@@ -114,6 +116,16 @@ class PlotChart:
             )
             return False
         return True
+
+    @staticmethod
+    def __col_empty(df: DataFrame, col: str, title: str) -> bool:
+        if df.empty:
+            bm_log(f"Cannot plot {title}, empty dataframe provided", LogType.ERROR)
+            return True
+        if df[col].isna().all():
+            bm_log(f"Cannot plot {title}: column '{col}' contains no data", LogType.ERROR)
+            return True
+        return False
 
     @staticmethod
     def plot(
