@@ -98,6 +98,7 @@ class PlotChart:
     def save(self, out_fig_name, gen_pdf: bool = False) -> Optional[str]:
         if self.plots_count == 0:
             bm_log(f"Will not save plot {out_fig_name}. It is empty", LogType.ERROR)
+            plt.close()
             return None
         self.fig.set_size_inches(w=10, h=8)
         self.fig.tight_layout()
@@ -109,7 +110,6 @@ class PlotChart:
         if gen_pdf:
             self.fig.savefig(f"{out_fig_name}.pdf", transparent=False)
         plt.close()
-
         return fig_name
 
     @staticmethod
