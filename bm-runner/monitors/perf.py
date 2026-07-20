@@ -50,7 +50,8 @@ class FlameGraph(Monitor):
         for event in cls.perf_events():
             cmds.extend(["-e", event])
         cmds.extend(args)
-        return cls.__sanitize_args(args)
+        cmds = cls.__sanitize_args(cmds)
+        return cmds
 
     @classmethod
     def __sanitize_args(cls, args: list[str]) -> list[str]:
