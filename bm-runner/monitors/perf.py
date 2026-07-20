@@ -137,7 +137,7 @@ class FlameGraph(Monitor):
         """
         # run perf script on the perf data in results folder
         perf = subprocess.Popen(
-            ["sudo", "perf", "script", "-i", self.DATA_FILE],
+            ["sudo", "perf", "script", "-i", self.DATA_FILE, "-F", "trace:"],
             cwd=self.dir,
             stdout=subprocess.PIPE,
             stderr=errfile,
