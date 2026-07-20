@@ -31,16 +31,14 @@ def test_perf_events_skip_arm_spe_when_sysfs_device_missing(monkeypatch, tmp_pat
     monkeypatch.setattr(FlameGraph, "ARM_SPE_DEVICE_GLOB", str(tmp_path / "arm_spe*"))
     monkeypatch.setenv(FlameGraph.ARM_SPE_PERIOD_ENV_VAR_NAME, "not-an-int")
 
-    assert FlameGraph.perf_events() == ["cycles"]
+    assert FlameGraph.perf_events() == ["cycles/freq=99/"]
     assert FlameGraph.perf_record_cmd(["-a"]) == [
         "sudo",
         "perf",
         "record",
         "-g",
-        "-F",
-        "99",
         "-e",
-        "cycles",
+        "cycles/freq=99/",
         "-a",
     ]
 
@@ -59,14 +57,14 @@ def test_perf_events_include_arm_spe_when_sysfs_device_has_type(monkeypatch, tmp
         str(tmp_path / "arm_spe*" / "caps" / "min_interval"),
     )
 
-    assert FlameGraph.perf_events() == ["cycles", "arm_spe/jitter=1,period=10240/"]
+    assert FlameGraph.perf_events() == ["cycles/freq=99/", "arm_spe/jitter=1,period=10240/"]
     assert FlameGraph.perf_record_cmd(["-a"]) == [
         "sudo",
         "perf",
         "record",
         "-g",
         "-e",
-        "cycles",
+        "cycles/freq=99/",
         "-e",
         "arm_spe/jitter=1,period=10240/",
         "-a",
