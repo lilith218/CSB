@@ -92,7 +92,9 @@ class FlameGraph(Monitor):
                 # perf event modifier characters, treat it as a tracepoint name.
                 or (len(parts) == 2 and not set(parts[1]) <= event_modifiers)
             )
-            for event in events
+            for event_selector in events
+            # split by comma for cases like cycles:k,cycles:u
+            for event in event_selector.split(",")
         )
 
     @classmethod

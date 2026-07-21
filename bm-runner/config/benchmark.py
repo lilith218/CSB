@@ -45,8 +45,7 @@ class MonitorType(str, Enum):
     REDIS_BENCHMARK: parses the output of redis_benchmark.
     SAR_NET: monitors network traffic.
     PERF_STAT: Runs perf stat.
-    PERF_LOCK: Runs perf lock, and perf lock contention if supported. Lock-contention output is generated when the kernel exposes the required `perf lock` trace-points. Note that `perf_lock` monitor invokes `perf` monitor even if it was not added by the user. Also when tracepoint events are
-    configured, incompatible frequency arguments (`-F <freq>`, `-F<freq>`,`--freq <freq>`, and `--freq=<freq>`) are automatically removed
+    PERF_LOCK: Runs perf lock, and perf lock contention if supported. Lock-contention output is generated when the kernel exposes the required `perf lock` trace-points. Note that `perf_lock` monitor invokes `perf` monitor even if it was not added by the user. Also when tracepoint events are configured, incompatible frequency arguments (`-F <freq>`, `-F<freq>`,`--freq <freq>`, and `--freq=<freq>`) are automatically removed.
     BPF_TRACE: Runs [bpftrace](https://bpftrace.org/docs/release_025/stdlib) with the given programs. Users may list programs from scripts/bpftrace. Giving multiple programs as arguments, will result in launching multiple instances of bpftrace.
     """
 

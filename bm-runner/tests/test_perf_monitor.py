@@ -141,3 +141,7 @@ def test_sanitize_args() -> None:
     args = ["-e", "sched:sched_switch", "-F99"]
     result = FlameGraph._FlameGraph__sanitize_args(args)  # ty: ignore[unresolved-attribute]
     assert result == ["-e", "sched:sched_switch"]
+
+    args = ["-e", "cycles:k,cycles:u", "-F", "999"]
+    result = FlameGraph._FlameGraph__sanitize_args(args)  # ty: ignore[unresolved-attribute]
+    assert result == args
