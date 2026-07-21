@@ -66,6 +66,10 @@ class FlameGraph(Monitor):
 
         # Also support --event=<event>.
         events.extend(arg.removeprefix("--event=") for arg in args if arg.startswith("--event="))
+        # Also support the attached short form: -e<event>.
+        events.extend(
+            arg.removeprefix("-e") for arg in args if arg.startswith("-e") and arg != "-e"
+        )
         # existing event modifiers from perf doc
         event_modifiers = set("ukhIGHpPSDWebRX")
 
@@ -101,11 +105,14 @@ class FlameGraph(Monitor):
         sanitized_args: list[str] = args.copy()
 
         # These arguments are incompatible with tracepoint events.
-        incompatible_args = [
+        incompatible_args = [  # keep the list ordered
             (
                 "-F",
                 False,
             ),  # False means look for arguments that are exact match of this, and drop the arg that follows
+            # Remove the attached form, such as "-F99".
+            # This must come after the exact "-F" entry.
+            ("-F", True),
             (
                 "--freq=",
                 True,
