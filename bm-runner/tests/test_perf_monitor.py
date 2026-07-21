@@ -103,3 +103,14 @@ def test_perf_stat_falls_back_to_metric_value(tmp_path):
     monitor.stat = SimpleNamespace(output_file_name=str(output))
 
     assert monitor.collect_results() == "instructions=1.25;"
+
+
+def test_sanitize_args() -> None:
+    args = ["-e", "sched:sched_switch", "-F", "99", "--freq", "199", "--freq=299", "-F", "999"]
+
+    result = FlameGraph._FlameGraph__sanitize_args(args)  # ty: ignore[unresolved-attribute]
+    assert result == ["-e", "sched:sched_switch"]
+
+    args = ["-e", "cycles", "-F", "99"]
+    result = FlameGraph._FlameGraph__sanitize_args(args)  # ty: ignore[unresolved-attribute]
+    assert result == args

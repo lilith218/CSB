@@ -54,18 +54,66 @@ class FlameGraph(Monitor):
         return cmds
 
     @classmethod
+    def __args_has_tracepoint_events(cls, args: list[str]) -> bool:
+        # get all arguments that are preceded with either
+        # -e or --event
+        events = [
+            args[idx + 1]
+            # for all elements except the last one.
+            for idx, arg in enumerate(args[:-1])
+            if arg in ("-e", "--event")
+        ]
+        # if any of the events contain a colon
+        # then it is a tracepoint event
+        return any(":" in event for event in events)
+
+    @classmethod
     def __sanitize_args(cls, args: list[str]) -> list[str]:
-        forbidden = "-F"
-        if any(item.startswith(("lock:", "tracepoint:")) for item in args):
-            while forbidden in args:
-                idx = args.index(forbidden)
-                del args[idx : min(idx + 2, len(args))]
+        # We do not need to sanitize if none of the events
+        # is a tracepoint event.
+        if not cls.__args_has_tracepoint_events(args):
+            return args
+
+        sanitized_args: list[str] = args.copy()
+
+        # These arguments are incompatible with tracepoint events.
+        incompatible_args = [
+            (
+                "-F",
+                False,
+            ),  # False means look for arguments that are exact match of this, and drop the arg that follows
+            (
+                "--freq=",
+                True,
+            ),  # True means look for arguments that start with this, and don't drop the arg that follows
+            ("--freq", False),
+        ]
+
+        for arg, starts_with in incompatible_args:
+            # we do it in a loop, because same argument might be
+            # added multiple times, so we want to get rid of all occurrences
+            while True:
+                if starts_with:
+                    idx = next(
+                        (i for i, item in enumerate(sanitized_args) if item.startswith(arg)),
+                        None,
+                    )
+                    if idx is None:
+                        break
+                    del sanitized_args[idx]
+                else:
+                    if arg not in sanitized_args:
+                        break
+                    idx = sanitized_args.index(arg)
+                    del sanitized_args[idx : min(idx + 2, len(sanitized_args))]
+
                 bm_log(
-                    f"Given argument {forbidden} was removed from perf args. It is incompatible with lock:* or tracepoint:* events.",
+                    f"Given argument {arg} was removed from perf args. "
+                    "It is incompatible with tracepoint events.",
                     LogType.WARNING,
                 )
 
-        return args
+        return sanitized_args
 
     @classmethod
     def perf_events(cls) -> list[str]:
