@@ -63,9 +63,33 @@ class FlameGraph(Monitor):
             for idx, arg in enumerate(args[:-1])
             if arg in ("-e", "--event")
         ]
-        # if any of the events contain a colon
-        # then it is a tracepoint event
-        return any(":" in event for event in events)
+
+        # Also support --event=<event>.
+        events.extend(arg.removeprefix("--event=") for arg in args if arg.startswith("--event="))
+        # existing event modifiers from perf doc
+        event_modifiers = set("ukhIGHpPSDWebRX")
+
+        return any(
+            # Split the event into its colon-separated components.
+            # Examples:
+            #   cycles:u                 -> ["cycles", "u"]
+            #   sched:sched_switch       -> ["sched", "sched_switch"]
+            #   sched:sched_switch:u     -> ["sched", "sched_switch", "u"]
+            (
+                # If there are more than two components, this cannot be a regular
+                # event with modifiers (e.g. cycles:u); it is a tracepoint with
+                # one or more modifiers.
+                len(parts := event.split(":")) > 2
+                # Two components can either be:
+                #   event:modifier         (e.g. cycles:u)
+                #   subsystem:tracepoint   (e.g. sched:sched_switch)
+                #
+                # If the second component is not exclusively made up of documented
+                # perf event modifier characters, treat it as a tracepoint name.
+                or (len(parts) == 2 and not set(parts[1]) <= event_modifiers)
+            )
+            for event in events
+        )
 
     @classmethod
     def __sanitize_args(cls, args: list[str]) -> list[str]:

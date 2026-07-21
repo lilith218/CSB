@@ -106,11 +106,30 @@ def test_perf_stat_falls_back_to_metric_value(tmp_path):
 
 
 def test_sanitize_args() -> None:
-    args = ["-e", "sched:sched_switch", "-F", "99", "--freq", "199", "--freq=299", "-F", "999"]
+    args = [
+        "-e",
+        "sched:sched_switch:u",
+        "-F",
+        "99",
+        "--freq",
+        "199",
+        "--freq=299",
+        "-F",
+        "999",
+        "--event=cycles",
+    ]
 
     result = FlameGraph._FlameGraph__sanitize_args(args)  # ty: ignore[unresolved-attribute]
-    assert result == ["-e", "sched:sched_switch"]
+    assert result == ["-e", "sched:sched_switch:u", "--event=cycles"]
 
     args = ["-e", "cycles", "-F", "99"]
     result = FlameGraph._FlameGraph__sanitize_args(args)  # ty: ignore[unresolved-attribute]
     assert result == args
+
+    args = ["-e", "cycles:uk", "-F", "99"]
+    result = FlameGraph._FlameGraph__sanitize_args(args)  # ty: ignore[unresolved-attribute]
+    assert result == args
+
+    args = ["--event=sched:sched_switch:uk", "--freq=299"]
+    result = FlameGraph._FlameGraph__sanitize_args(args)  # ty: ignore[unresolved-attribute]
+    assert result == ["--event=sched:sched_switch:uk"]
