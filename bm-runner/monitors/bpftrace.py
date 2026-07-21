@@ -196,7 +196,7 @@ class BpfTrace(Monitor):
                 title=trace_point,
             )
             df[self.COUNT] = df[self.COUNT].astype(int)
-            PlotChart.plot(plot=cfg, df=df, out_fig_name=fname)
+            PlotChart.plot(plot=cfg, df=df, out_fig_name=Path(fname).with_suffix(""))
             count_col = df[self.COUNT]
             sum = count_col.sum()
             avg = count_col.mean()
@@ -276,7 +276,7 @@ class BpfTrace(Monitor):
                 shape="barplot",
                 title=trace_point,
             )
-            PlotChart.plot(plot=cfg, df=plot_df, out_fig_name=fname)
+            PlotChart.plot(plot=cfg, df=plot_df, out_fig_name=Path(fname).with_suffix(""))
             if len(df[self.COMM].unique()) > 1:
                 bm_log(
                     f"{fname}: Multiple COMM values detected. All will be treated as same process!",
