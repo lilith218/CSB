@@ -38,6 +38,21 @@ def minimal_runtime_binds() -> list[str]:
     ])
     return args
 
+def jiuwen_args(config: argparse.Namespace) -> list[str]:
+    return [
+        "--unshare-pid",
+        "--unshare-ipc",
+        "--unshare-uts",
+        "--unshare-cgroup-try",
+        "--die-with-parent",
+        "--ro-bind",
+        "/",
+        "/",
+        "--proc",
+        "/proc",
+        "--dev",
+        "/dev",
+    ]
 
 def shared_sandbox_args(config: argparse.Namespace) -> list[str]:
     return [
@@ -187,6 +202,8 @@ def build_command(config: argparse.Namespace) -> list[str]:
         scenario_args = filesystem_args(config)
     elif config.scenario == "max":
         scenario_args = max_isolation_args(config)
+    elif config.scenario == "jiuwen":
+        scenario_args = jiuwen_args(config)
     else:
         raise ValueError(f"unknown scenario: {config.scenario}")
 
@@ -224,7 +241,7 @@ if __name__ == "__main__":
     parser.add_argument("--iterations", type=int, default=100, help="Launches per execution unit")
     parser.add_argument(
         "--scenario",
-        choices=["baseline", "namespaces", "filesystem", "max"],
+        choices=["baseline", "namespaces", "filesystem", "max", "jiuwen"],
         default="max",
         help="Bubblewrap feature profile to benchmark",
     )
