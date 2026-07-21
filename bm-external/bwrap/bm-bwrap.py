@@ -58,7 +58,7 @@ def jiuwen_root_binds() -> list[str]:
             continue
 
         args.extend(["--ro-bind", path, path])
-        return args
+    return args
 
 def jiuwen_args(config: argparse.Namespace) -> list[str]:
     return [
