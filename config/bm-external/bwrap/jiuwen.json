@@ -8,7 +8,7 @@
       "hue": "execution_unit",
       "hue_lbl": "Executor",
       "shape": "barplot",
-      "title": "bwrap baseline launch time"
+      "title": "bwrap Jiuwen launch time"
     },
     {
       "x": "container_cnt",
@@ -18,7 +18,7 @@
       "hue": "execution_unit",
       "hue_lbl": "Executor",
       "shape": "barplot",
-      "title": "bwrap baseline average launch time"
+      "title": "bwrap Jiuwen average launch time"
     }
   ],
   "benchmark_config": {
@@ -60,7 +60,7 @@
     {
       "path": "bm-external/bwrap",
       "name": "bm-bwrap.py",
-      "args": "--index {index} --units {n_units} --iterations 10000 --scenario jiuwen --command /usr/bin/true"
+      "args": "--index {index} --units {n_units} --iterations 1000 --scenario jiuwen --command /usr/bin/true"
     }
   ]
 }

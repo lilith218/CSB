@@ -38,20 +38,48 @@ def minimal_runtime_binds() -> list[str]:
     ])
     return args
 
+def jiuwen_root_binds() -> list[str]:
+    args: list[str] = []
+
+    for entry in sorted(os.scandir("/"), key=lambda e: e.name):
+        if entry.name.startswith("."):
+            continue
+
+        path = entry.path
+        if path in {"/dev", "/proc"}:
+            continue
+
+        try:
+            if not entry.is_dir(follow_symlinks=True) and not entry.is_file(
+                follow_symlinks=True
+            ):
+                continue
+        except OSError:
+            continue
+
+        args.extend(["--ro-bind", path, path])
+        return args
+
 def jiuwen_args(config: argparse.Namespace) -> list[str]:
     return [
         "--unshare-pid",
         "--unshare-ipc",
         "--unshare-uts",
-        "--unshare-cgroup-try",
-        "--die-with-parent",
-        "--ro-bind",
-        "/",
-        "/",
+        "--unshare-cgroup-try", # approximates Jiuwen’s stricter --unshare-cgroup
+        *jiuwen_root_binds(),
         "--proc",
         "/proc",
         "--dev",
         "/dev",
+        "--dev-bind",
+        "/dev/null",
+        "/dev/null",
+        "--dev-bind",
+        "/dev/random",
+        "/dev/random",
+        "--dev-bind",
+        "/dev/urandom",
+        "/dev/urandom",
     ]
 
 def shared_sandbox_args(config: argparse.Namespace) -> list[str]:
