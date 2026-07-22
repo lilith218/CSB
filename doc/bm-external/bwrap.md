@@ -45,7 +45,7 @@ Run one of:
 ./scripts/run-single.sh config/bm-external/bwrap/namespaces.json
 ./scripts/run-single.sh config/bm-external/bwrap/filesystem.json
 ./scripts/run-single.sh config/bm-external/bwrap/max-isolation.json
-./scripts/run-single.sh config/bm-external/bwrap/jiuwen.json
+CSB_BPFTRACE_FILTER='/ comm == "bwrap" || comm == "true" /' ./scripts/run-single.sh config/bm-external/bwrap/jiuwen.json
 ```
 
 For kernel performance investigation, all configs enable `perf` and `mpstat`
