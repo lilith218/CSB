@@ -20,6 +20,7 @@ host runtime directories required to execute that command inside the sandbox.
 - `namespaces`: uses bwrap with user, IPC, PID, UTS, and cgroup namespace isolation, while read-only binding `/`.
 - `filesystem`: uses a small read-only runtime file system binds, new proc/dev mounts, and tmpfs mounts for writable paths.
 - `max`: combines namespace isolation, minimal read-only runtime binds, tmpfs writable paths, clear environment, new session, `--die-with-parent`, and `--disable-userns`.
+- `jiuwen`: approximates Jiuwen's Bubblewrap configuration by using IPC, PID, UTS, and cgroup namespace isolation, per-directory   read-only root binds, and Jiuwen-style /proc and /dev handling.
 
 The network namespace is probed once per execution unit for the `namespaces` and
 `max` scenarios. If the installed bwrap cannot create it without extra
@@ -28,6 +29,12 @@ privilege, the benchmark omits only `--unshare-net` and reports
 hard failure. The cgroup namespace uses `--unshare-cgroup-try` so the benchmark
 can still run on kernels or installations where cgroup namespace creation is not
 available.
+
+## Metrics
+
+The primary metric is `avg_launch_time`, which measures the average time, in seconds, required to launch the benchmark command.
+For Bubblewrap scenarios, this includes the overhead of creating the sandbox.
+Lower values indicate better performance.
 
 ## Configs
 
@@ -38,7 +45,8 @@ Run one of:
 ./scripts/run-single.sh config/bm-external/bwrap/namespaces.json
 ./scripts/run-single.sh config/bm-external/bwrap/filesystem.json
 ./scripts/run-single.sh config/bm-external/bwrap/max-isolation.json
+./scripts/run-single.sh config/bm-external/bwrap/jiuwen.json
 ```
 
-For kernel performance investigation, the configs enable `perf` and `mpstat`
-only.
+For kernel performance investigation, all configs enable `perf` and `mpstat`
+only. Some configs enable additional monitors.
