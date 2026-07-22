@@ -60,7 +60,7 @@
     {
       "path": "bm-external/bwrap",
       "name": "bm-bwrap.py",
-      "args": "--index {index} --units {n_units} --iterations 1000 --scenario jiuwen --command /usr/bin/true"
+      "args": "--index {index} --units {n_units} --iterations 1000 --scenario jiuwen_code_agent --command /usr/bin/true"
     }
   ]
 }

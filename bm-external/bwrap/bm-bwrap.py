@@ -38,7 +38,7 @@ def minimal_runtime_binds() -> list[str]:
     ])
     return args
 
-def jiuwen_root_binds() -> list[str]:
+def jiuwen_code_agent_root_binds() -> list[str]:
     args: list[str] = []
 
     for entry in sorted(os.scandir("/"), key=lambda e: e.name):
@@ -60,14 +60,14 @@ def jiuwen_root_binds() -> list[str]:
         args.extend(["--ro-bind", path, path])
     return args
 
-def jiuwen_args(config: argparse.Namespace) -> list[str]:
+def jiuwen_code_agent_args(config: argparse.Namespace) -> list[str]:
     return [
         "--unshare-pid",
         "--unshare-ipc",
         "--unshare-uts",
         "--unshare-cgroup-try", # approximates Jiuwen’s stricter --unshare-cgroup
         *network_namespace_args(config),
-        *jiuwen_root_binds(),
+        *jiuwen_code_agent_root_binds(),
         "--proc",
         "/proc",
         "--dev",
@@ -220,7 +220,7 @@ def build_command(config: argparse.Namespace) -> list[str]:
         raise FileNotFoundError(f"bubblewrap executable not found: {config.bwrap}")
 
     config.network_namespace_used = False
-    if config.scenario in {"namespaces", "max", "jiuwen"}:
+    if config.scenario in {"namespaces", "max", "jiuwen_code_agent"}:
         config.network_namespace_used = can_unshare_network(bwrap, command)
         if config.require_netns and not config.network_namespace_used:
             raise RuntimeError("bubblewrap network namespace probe failed")
@@ -231,8 +231,8 @@ def build_command(config: argparse.Namespace) -> list[str]:
         scenario_args = filesystem_args(config)
     elif config.scenario == "max":
         scenario_args = max_isolation_args(config)
-    elif config.scenario == "jiuwen":
-        scenario_args = jiuwen_args(config)
+    elif config.scenario == "jiuwen_code_agent":
+        scenario_args = jiuwen_code_agent_args(config)
     else:
         raise ValueError(f"unknown scenario: {config.scenario}")
 
@@ -270,7 +270,7 @@ if __name__ == "__main__":
     parser.add_argument("--iterations", type=int, default=100, help="Launches per execution unit")
     parser.add_argument(
         "--scenario",
-        choices=["baseline", "namespaces", "filesystem", "max", "jiuwen"],
+        choices=["baseline", "namespaces", "filesystem", "max", "jiuwen_code_agent"],
         default="max",
         help="Bubblewrap feature profile to benchmark",
     )
