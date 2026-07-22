@@ -101,7 +101,7 @@ jobs:
         with:
           python-version: "3.10"
       - name: Install Ty
-        run: pip install ty
+        run: pip install ty==0.0.10
       - name: Run Ty
         run: ./scripts/configure.sh && ty check --venv ./venv ./bm-runner
 
