@@ -65,7 +65,7 @@ def jiuwen_code_agent_args(config: argparse.Namespace) -> list[str]:
         "--unshare-pid",
         "--unshare-ipc",
         "--unshare-uts",
-        "--unshare-cgroup-try", # approximates Jiuwen’s stricter --unshare-cgroup
+        "--unshare-cgroup-try", # approximates Jiuwen’s code agent stricter --unshare-cgroup
         *network_namespace_args(config),
         *jiuwen_code_agent_root_binds(),
         "--proc",

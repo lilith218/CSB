@@ -8,7 +8,7 @@
       "hue": "execution_unit",
       "hue_lbl": "Executor",
       "shape": "barplot",
-      "title": "bwrap Jiuwen launch time"
+      "title": "bwrap Jiuwen-code-agent launch time"
     },
     {
       "x": "container_cnt",
@@ -18,7 +18,7 @@
       "hue": "execution_unit",
       "hue_lbl": "Executor",
       "shape": "barplot",
-      "title": "bwrap Jiuwen average launch time"
+      "title": "bwrap Jiuwen-code-agent average launch time"
     }
   ],
   "benchmark_config": {
