@@ -113,7 +113,8 @@ void
 bm_env_prepare(void)
 {
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-        perror("Failed to ignore sigpipe");
+        perror("Failed to ignore sigpipe.");
+        exit(-1);
     }
 }
 
