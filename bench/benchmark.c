@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <signal.h>
 #define DISTRIBUTION_BOUND 1024
 #define BM_PRINT_DELIMITER ';'
 
@@ -33,6 +34,7 @@ bm_params_t g_params;
 size_t g_ops[DISTRIBUTION_BOUND];
 
 /* functions prototypes */
+void bm_env_prepare(void);
 void bm_phase_warmup(void);
 void bm_phase_run(void);
 void bm_phase_conclude(void);
@@ -47,7 +49,7 @@ main(int argc, char *argv[])
         fprintf(stderr, "Error in param extraction %d\n", ret);
         return ret;
     }
-
+    bm_env_prepare();
     bm_phase_warmup();
     bm_phase_run();
     bm_phase_conclude();
@@ -105,6 +107,14 @@ run(void *args)
     bm_target_dereg(&ctx, tid);
 
     return NULL;
+}
+
+void
+bm_env_prepare(void)
+{
+    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+        perror("Failed to ignore sigpipe");
+    }
 }
 
 void
