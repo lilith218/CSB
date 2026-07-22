@@ -22,8 +22,8 @@ host runtime directories required to execute that command inside the sandbox.
 - `max`: combines namespace isolation, minimal read-only runtime binds, tmpfs writable paths, clear environment, new session, `--die-with-parent`, and `--disable-userns`.
 - `jiuwen`: approximates Jiuwen's Bubblewrap configuration by using IPC, PID, UTS, and cgroup namespace isolation, per-directory   read-only root binds, and Jiuwen-style /proc and /dev handling.
 
-The network namespace is probed once per execution unit for the `namespaces` and
-`max` scenarios. If the installed bwrap cannot create it without extra
+The network namespace is probed once per execution unit for the `namespaces`,
+`max`, and `jiuwen` scenarios. If the installed bwrap cannot create it without extra
 privilege, the benchmark omits only `--unshare-net` and reports
 `network_namespace=0`; pass `--require-netns` in a config if that should be a
 hard failure. The cgroup namespace uses `--unshare-cgroup-try` so the benchmark
