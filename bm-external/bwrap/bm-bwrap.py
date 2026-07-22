@@ -66,6 +66,7 @@ def jiuwen_args(config: argparse.Namespace) -> list[str]:
         "--unshare-ipc",
         "--unshare-uts",
         "--unshare-cgroup-try", # approximates Jiuwen’s stricter --unshare-cgroup
+        *network_namespace_args(config),
         *jiuwen_root_binds(),
         "--proc",
         "/proc",
@@ -219,7 +220,7 @@ def build_command(config: argparse.Namespace) -> list[str]:
         raise FileNotFoundError(f"bubblewrap executable not found: {config.bwrap}")
 
     config.network_namespace_used = False
-    if config.scenario in {"namespaces", "max"}:
+    if config.scenario in {"namespaces", "max", "jiuwen"}:
         config.network_namespace_used = can_unshare_network(bwrap, command)
         if config.require_netns and not config.network_namespace_used:
             raise RuntimeError("bubblewrap network namespace probe failed")
