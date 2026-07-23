@@ -19,6 +19,15 @@
       "hue_lbl": "Executor",
       "shape": "barplot",
       "title": "bwrap Jiuwen-code-agent average launch time"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "bpf_kernfs_remove_by_name_ns_hist",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "Duration of Kernfs_remove_by_name_ns",
+      "type": "bpftrace_hist"
     }
   ],
   "benchmark_config": {
@@ -44,12 +53,14 @@
         "bpf_cgroup_charge_hist.bt",
         "bpf_cgroup_fork_hist.bt",
         "bpf_cgroup_procs_write_hist.bt",
-        "bpf_cgroup_rstat_flush_hist.bt"
+        "bpf_cgroup_rstat_flush_hist.bt",
+        "bpf_kernfs_remove_by_name_ns_hist.bt"
       ]
     }
   },
   "containers": {
     "core_count": 1,
+    "container_list": {"values":[[6]]},
     "core_assignment_policy": {
       "cpu_order": "asc",
       "pack_group": "none",
