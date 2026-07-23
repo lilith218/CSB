@@ -1,0 +1,13 @@
+kprobe:kernfs_remove_by_name_ns
+__FILTER__
+{
+    @start[tid] = nsecs;
+}
+
+kretprobe:kernfs_remove_by_name_ns
+/@start[tid]/
+{
+    $duration = (nsecs - @start[tid]) / 1000;
+    @kernfs_remove_by_name_ns_latency[pid, comm] = hist($duration);
+    delete(@start[tid]);
+}
