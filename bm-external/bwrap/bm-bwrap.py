@@ -220,7 +220,6 @@ def build_command(config: argparse.Namespace) -> list[str]:
         raise FileNotFoundError(f"bubblewrap executable not found: {config.bwrap}")
 
     config.network_namespace_used = False
-    print (config.turn_off_net_ns_usage)
     if not config.turn_off_net_ns_usage and config.scenario in {"namespaces", "max", "jiuwen_code_agent"}:
         config.network_namespace_used = can_unshare_network(bwrap, command)
         if config.require_netns and not config.network_namespace_used:
@@ -296,7 +295,6 @@ if __name__ == "__main__":
     )
     args, _ = parser.parse_known_args()
 
-    print(args.turn_off_net_ns_usage)
     instance_name, launch_time, success_count = run_benchmark(args)
     avg_launch_time = launch_time / args.iterations if args.iterations else 0.0
 

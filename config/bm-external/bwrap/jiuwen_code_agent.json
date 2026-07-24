@@ -60,7 +60,7 @@
   },
   "containers": {
     "core_count": 1,
-    "container_list": {"values":[[6]]},
+    "container_list": {"values":[[160]]},
     "core_assignment_policy": {
       "cpu_order": "asc",
       "pack_group": "none",
