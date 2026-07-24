@@ -220,7 +220,7 @@ def build_command(config: argparse.Namespace) -> list[str]:
         raise FileNotFoundError(f"bubblewrap executable not found: {config.bwrap}")
 
     config.network_namespace_used = False
-    if config.scenario in {"namespaces", "max", "jiuwen_code_agent"}:
+    if config.scenario in {"namespaces", "max"}:
         config.network_namespace_used = can_unshare_network(bwrap, command)
         if config.require_netns and not config.network_namespace_used:
             raise RuntimeError("bubblewrap network namespace probe failed")
