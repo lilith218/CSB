@@ -220,7 +220,8 @@ def build_command(config: argparse.Namespace) -> list[str]:
         raise FileNotFoundError(f"bubblewrap executable not found: {config.bwrap}")
 
     config.network_namespace_used = False
-    if config.scenario in {"namespaces", "max"}:
+    print (config.turn_off_net_ns_usage)
+    if not config.turn_off_net_ns_usage and config.scenario in {"namespaces", "max", "jiuwen_code_agent"}:
         config.network_namespace_used = can_unshare_network(bwrap, command)
         if config.require_netns and not config.network_namespace_used:
             raise RuntimeError("bubblewrap network namespace probe failed")
@@ -268,6 +269,7 @@ if __name__ == "__main__":
     parser.add_argument("--index", type=int, default=0, help="Index of this execution unit")
     parser.add_argument("--units", type=int, default=1, help="Number of execution units")
     parser.add_argument("--iterations", type=int, default=100, help="Launches per execution unit")
+    parser.add_argument("--turn-off-net-ns-usage", action="store_true", help="Allows users to turn off network namespace usage, if the scenario uses it by default.")
     parser.add_argument(
         "--scenario",
         choices=["baseline", "namespaces", "filesystem", "max", "jiuwen_code_agent"],
@@ -294,13 +296,17 @@ if __name__ == "__main__":
     )
     args, _ = parser.parse_known_args()
 
+    print(args.turn_off_net_ns_usage)
     instance_name, launch_time, success_count = run_benchmark(args)
     avg_launch_time = launch_time / args.iterations if args.iterations else 0.0
+
+    network_namespace_used = bool(getattr(args, 'network_namespace_used', False))
+    network_namespace_used = "yes" if network_namespace_used else "no"
 
     print(
         f"instance_name={instance_name};"
         f"scenario={args.scenario};"
-        f"network_namespace={int(getattr(args, 'network_namespace_used', False))};"
+        f"network_namespace_used={network_namespace_used};"
         f"success_count={success_count};"
         f"launch_time={launch_time:.6f};"
         f"avg_launch_time={avg_launch_time:.6f};"
