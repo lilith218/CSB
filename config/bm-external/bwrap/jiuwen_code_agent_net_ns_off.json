@@ -1,0 +1,77 @@
+{
+  "plots": [
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "time",
+      "y_lbl": "Total Time(s)",
+      "hue": "execution_unit",
+      "hue_lbl": "Executor",
+      "shape": "barplot",
+      "title": "bwrap Jiuwen-code-agent launch time"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "avg_launch_time",
+      "y_lbl": "Average Launch Time(s)",
+      "hue": "execution_unit",
+      "hue_lbl": "Executor",
+      "shape": "barplot",
+      "title": "bwrap Jiuwen-code-agent average launch time"
+    },
+    {
+      "x": "container_cnt",
+      "x_lbl": "#Benchmark Instances",
+      "y": "bpf_kernfs_remove_by_name_ns_hist",
+      "hue": "execution_type",
+      "hue_lbl": "Execution Env",
+      "title": "Duration of Kernfs_remove_by_name_ns",
+      "type": "bpftrace_hist"
+    }
+  ],
+  "benchmark_config": {
+    "exec_env": {
+      "native": []
+    },
+    "monitors": {
+      "mpstat": [
+        "-n",
+        "-u",
+        "-I",
+        "SCPU,SUM",
+        "-P",
+        "0"
+      ],
+      "perf": [
+        "-C",
+        "0"
+      ],
+      "perf_lock": [],
+      "bpftrace": [
+        "bpf_cgroup_attach_task_hist.bt",
+        "bpf_cgroup_charge_hist.bt",
+        "bpf_cgroup_fork_hist.bt",
+        "bpf_cgroup_procs_write_hist.bt",
+        "bpf_cgroup_rstat_flush_hist.bt",
+        "bpf_kernfs_remove_by_name_ns_hist.bt"
+      ]
+    }
+  },
+  "containers": {
+    "core_count": 1,
+    "container_list": {"values":[[6]]},
+    "core_assignment_policy": {
+      "cpu_order": "asc",
+      "pack_group": "none",
+      "one_cpu_per_core": true
+    }
+  },
+  "applications": [
+    {
+      "path": "bm-external/bwrap",
+      "name": "bm-bwrap.py",
+      "args": "--index {index} --units {n_units} --iterations 1000 --scenario jiuwen_code_agent --command /usr/bin/true --turn-off-net-ns-usage"
+    }
+  ]
+}
