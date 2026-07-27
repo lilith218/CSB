@@ -25,7 +25,7 @@ host runtime directories required to execute that command inside the sandbox.
 The network namespace is probed once per execution unit for the `namespaces`,
 `max`, and `jiuwen_code_agent` scenarios. If the installed bwrap cannot create it without extra
 privilege, the benchmark omits only `--unshare-net` and reports
-`network_namespace=0`; pass `--require-netns` in a config if that should be a
+`network_namespace_used=no`; pass `--require-netns` in a config if that should be a
 hard failure. The cgroup namespace uses `--unshare-cgroup-try` so the benchmark
 can still run on kernels or installations where cgroup namespace creation is not
 available.

@@ -1,4 +1,5 @@
 kprobe:kernfs_remove_by_name_ns
+__FILTER__
 {
     @start[tid] = nsecs;
 }
