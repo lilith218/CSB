@@ -81,10 +81,10 @@ class BenchmarkConfig(dict):
         ----------
         duration: int
             Duration of the benchmark in seconds.
-            JSON example: `"repeat": 3`
+            JSON example: `"duration": 1`
         repeat: int
             Number of times the benchmark should be repeated.
-            JSON example: `"repeat": 1`
+            JSON example: `"repeat": 3`
         exec_env: dict[ExecutionType, list[str]] = {"native":[], "container":[]}
             Dictates in which environments the benchmark is executed, and which
             extra arguments are used. Note that currently the arguments are

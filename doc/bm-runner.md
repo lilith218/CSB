@@ -42,9 +42,7 @@ $ ./run.sh
 [run.sh] benchmark environment already configured
 [run.sh] Running benchmarks
 The following benchmarks are available, select one to run
- 1) ../config/bm_empty.json
- 2) ../config/bm_mix_external.json
- 3) ../config/bm_server_redis.json
+ 1) config/bm_empty.json
  ...
 #? 1
 ```

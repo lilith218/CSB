@@ -14,8 +14,8 @@ General configuration for benchmarks, as well as a collection of system-level me
 <br/>***JSON key: "benchmark_config"***
 |Field|Type|Optional|Default|Description|
 |---|---|---|---|---|
-|duration|int|:white_check_mark:|`3`|    Duration of the benchmark in seconds.     JSON example: `"repeat": 3` |
-|repeat|int|:white_check_mark:|`1`|    Number of times the benchmark should be repeated.     JSON example: `"repeat": 1` |
+|duration|int|:white_check_mark:|`3`|    Duration of the benchmark in seconds.     JSON example: `"duration": 1` |
+|repeat|int|:white_check_mark:|`1`|    Number of times the benchmark should be repeated.     JSON example: `"repeat": 3` |
 |exec_env|dict[[ExecutionType](#executiontype), list[str]]|:white_check_mark:|`{"native":[], "container":[]}`|    Dictates in which environments the benchmark is executed, and which     extra arguments are used. Note that currently the arguments are     only considered in case of `bwrap`.     JSON example: `"exec_env" : {"native":[], "container":[], "bwrap":["--die-with-parent"]}` |
 |monitors|dict[[MonitorType](#monitortype), list[str]]|:white_check_mark:|`{}`|    Monitors to run in the background. |
 |threads|[ListConfig](#listconfig)|:white_check_mark:|`{"values": [[1]]}`|    Determines number of threads to run target benchmarks with.     If not provided all applications will be run with 1 thread. |

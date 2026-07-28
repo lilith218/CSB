@@ -1,6 +1,6 @@
 # CSB: Container Scalability Benchmarks
 
-CSB is a framework for generating benchmarks and benchmarking systems scalability.
+CSB is a framework for syscall generating, running, and analyzing benchmarks.
 
 It consists of the following components:
 
@@ -36,6 +36,11 @@ flowchart LR
     runner --> report
 ```
 
+## Project Goals
+
+In CSB, auto-generated benchmarks simulate the system call paths of real applications. The goal is to investigate kernel scalability as the number of application instances increases. We evaluate whether application performance, as simulated by these benchmarks, degrades as we increase the number of instances, whether they run inside containers or on bare metal.
+
+
 ## Getting started
 
 A good place to start is to try to run a dummy benchmark. Read [bm-runner][]
@@ -66,7 +71,7 @@ CSB
 
 The current version has been tested with:
 
-- [openEuler](https://www.openeuler.org/en/) v22.03 (LTS-SP4)
+- [openEuler](https://www.openeuler.org/en/) v22.03 (LTS-SP4), v24.03 (LTS-SP3)
 - [ubuntu](https://ubuntu.com/) 22.04.5 LTS
 
 The auto-generated benchmarks in this repository are generated for
