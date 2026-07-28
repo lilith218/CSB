@@ -1,6 +1,6 @@
 # CSB: Container Scalability Benchmarks
 
-CSB is a framework for syscall generating, running, and analyzing benchmarks.
+CSB is a framework for generating benchmarks and benchmarking systems scalability.
 
 It consists of the following components:
 
