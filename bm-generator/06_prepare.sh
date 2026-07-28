@@ -4,7 +4,7 @@
 
 source helper/bm-generator-lib.sh
 
- : ${DIR_PROG:="./reduced"}
+ : ${DIR_PROG:="./multidiff"}
  : ${JOBS:=$(nproc)}
 
 if [ ! -d "${DIR_PROG}" ]; then
@@ -15,7 +15,7 @@ if [ ! -d "${DIR_PROG}" ]; then
 fi
 
 if ! find "${DIR_PROG}" -type f -name '*.prog' -print -quit | grep -q .; then
-    echo "No reduced syzkaller programs found in ${DIR_PROG}." >&2
+    echo "No multidiff-selected syzkaller programs found in ${DIR_PROG}." >&2
     exit 1
 fi
 

@@ -9,6 +9,7 @@ echo "STEP#A: Testing architecture metadata helpers ..."
 ./test_01_build.sh
 ./test_pipeline_guards.sh
 ./test_pipeline_layout.sh
+./test_multidiff_stage.sh
 STRACE_LOG="ls_strace.log"
 APP="ls -la /dev"
 ../scripts/plugins/collect_strace.sh ${STRACE_LOG} ${APP}
@@ -24,9 +25,11 @@ echo "STEP#3: Extracting ..."
 ./03_extract.sh
 echo "STEP#4: Reducing ..."
 ./04_reduce.sh
-echo "STEP#5: Preparing ..."
-./05_prepare.sh
-echo "STEP#6: Generating ..."
-./06_generate.sh
-echo "STEP#7: Selecting benchmarks using flamegraph-diff ..."
-./07_select.sh
+echo "STEP#5: Filtering with multidiff ..."
+./05_multidiff.sh
+echo "STEP#6: Preparing ..."
+./06_prepare.sh
+echo "STEP#7: Generating ..."
+./07_generate.sh
+echo "STEP#8: Selecting benchmarks using flamegraph-diff ..."
+./08_select.sh

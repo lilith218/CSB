@@ -11,6 +11,7 @@ printf '1 getpid() = 1\n' > "${tmp}/trace.log"
 
 printf '#!/bin/sh\nexit 7\n' > "${tmp}/syz/bin/syz-trace2syz"
 printf '#!/bin/sh\nexit 0\n' > "${tmp}/syz/bin/syz-prog-reduce"
+printf '#!/bin/sh\nexit 0\n' > "${tmp}/syz/bin/syz-multidiff"
 chmod +x "${tmp}/syz/bin/"*
 
 if DIR_SYZ_SRC="${tmp}/syz" DIR_PROG="${tmp}/parsed" TRACE_ARCH=arm64 \
@@ -31,7 +32,13 @@ if DIR_SYZ_SRC="${tmp}/syz" DIR_PROG="${tmp}/empty" DIR_OUT="${tmp}/reduce" \
   exit 1
 fi
 
-if DIR_PROG="${tmp}/empty" ./05_prepare.sh; then
-  echo "05_prepare.sh accepted an empty input directory" >&2
+if DIR_SYZ_SRC="${tmp}/syz" DIR_PROG="${tmp}/empty" DIR_OUT="${tmp}/multidiff" \
+    ./05_multidiff.sh; then
+  echo "05_multidiff.sh accepted an empty input directory" >&2
+  exit 1
+fi
+
+if DIR_PROG="${tmp}/empty" ./06_prepare.sh; then
+  echo "06_prepare.sh accepted an empty input directory" >&2
   exit 1
 fi

@@ -86,9 +86,10 @@ the following scripts within `bm-generator/`:
 |`02_parse.sh`| Parses an strace log file into the [syzlang][] internal representation of syzkaller. It outputs one [syzlang][] program for each strace log file. Output is stored in `deserialized/0/program_<id1>.prog` |
 |`03_extract.sh`| Analyzes all `deserialized/*/*.prog` [syzlang][] programs. For each input program, a dependency graph for all syscalls is computed. It outputs one [syzlang][] program per dependency graph into `extracted/min_<id2>.prog` |
 |`04_reduce.sh`| Reduces extracted [syzlang][] programs by dynamically detecting repeated syscall motifs and keeping a dependency-valid representative sample. Output is stored in `reduced/` with the same directory layout as `extracted/`. |
-|`05_prepare.sh`| Processes all `reduced/*.prog` [syzlang][] programs. Each input program is converted into a C header containing a function calling all dependent syscalls from the input [syzlang][] program. Output is stored in `../bench/targets/gen-ws/syz/min_<id3>.h` |
-|`06_generate.sh`| Uses [tmplr][] to generate [bm-runner][] compatible headers and JSON configuration for all generated `../bench/targets/gen-ws/syz/min_<id3>.h` files. Output is stored as `../bench/targets/gen-ws/min_<id3>.h` header and `../../config/gen-ws/fg_min_<id3>.json`. |
-|`07_select.sh`| Runs all the auto-generated benchmarks for a short duration, performs pairwise comparison of the flamegraphs of the benchmark execution, and prints a list of benchmarks that are different enough from each other. |
+|`05_multidiff.sh`| Uses syzkaller's `syz-multidiff` to fold equivalent and constant-only-different programs. Selected programs are copied to `multidiff/` with their relative layout preserved. |
+|`06_prepare.sh`| Processes all `multidiff/*.prog` [syzlang][] programs. Each input program is converted into a C header containing a function calling all dependent syscalls from the input [syzlang][] program. Output is stored in `../bench/targets/gen-ws/syz/min_<id3>.h` |
+|`07_generate.sh`| Uses [tmplr][] to generate [bm-runner][] compatible headers and JSON configuration for all generated `../bench/targets/gen-ws/syz/min_<id3>.h` files. Output is stored as `../bench/targets/gen-ws/min_<id3>.h` header and `../../config/gen-ws/fg_min_<id3>.json`. |
+|`08_select.sh`| Runs all the auto-generated benchmarks for a short duration, performs pairwise comparison of the flamegraphs of the benchmark execution, and prints a list of benchmarks that are different enough from each other. |
 
 The only script that takes an argument is `02_parse.sh`, which needs a path to an strace log file generated as described below.
 ```bash
@@ -130,18 +131,20 @@ cd bm-generator/
 ./02_parse.sh strace.log
 ./03_extract.sh
 ./04_reduce.sh
-./05_prepare.sh
-./06_generate.sh
-./07_select.sh
+./05_multidiff.sh
+./06_prepare.sh
+./07_generate.sh
+./08_select.sh
 ```
 
 `01_build.sh` configures a missing CSB build directory automatically. Set
 `DIR_BUILD` to use a build directory other than `../build`. Parsing, extraction,
-and reduction stop with an error when the preceding stage produces no `.prog`
+reduction, and multidiff stop with an error when the preceding stage produces no `.prog`
 files, so a failed conversion cannot silently create an empty benchmark set.
 
-Reduction is a required pipeline stage. `05_prepare.sh` consumes the resulting
-`./reduced` programs by default.
+Reduction and multidiff are required pipeline stages. `05_multidiff.sh` consumes
+`./reduced` and writes the selected programs to `./multidiff`; `06_prepare.sh`
+then consumes only that selected output.
 
 Reduction is controlled with environment variables:
 
@@ -162,8 +165,14 @@ For example:
 
 ```bash
 ./04_reduce.sh
-./05_prepare.sh
+./05_multidiff.sh
+./06_prepare.sh
 ```
+
+`MULTIDIFF_FOLD` controls the multidiff folding level and defaults to `2`, which
+folds completely identical programs and programs that differ only by constants.
+`DIR_PROG` and `DIR_OUT` override the default `./reduced` input and
+`./multidiff` output directories for this stage.
 
 Generator scripts intentionally fail on non-empty output directories. This is a
 guard against accidentally mixing generated benchmark sets; remove or rename the
@@ -225,7 +234,7 @@ This directly allows comparing the postprocessed flamegraphs of the autogenerate
 
 To run the benchmarks selection pipeline after generation of the microbenchmarks, you can run:
 ```bash
-./07_select.sh
+./08_select.sh
 ```
 Alternatively, you can use the manual workflow outlined below.
 
