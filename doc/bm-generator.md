@@ -200,7 +200,7 @@ Build the syzkaller tools from the nested repository:
 
 ```bash
 cd deps/syzkaller
-make trace2syz prog2c extraction
+make trace2syz prog2c extraction progreduce multidiff
 ```
 
 Focused tests for syzkaller-side CSB changes:
