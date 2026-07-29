@@ -4,7 +4,7 @@
 
 
 GOBIN="`go env GOBIN`"
- : ${DIR_BUILD:="../build"}
+DIR_BUILD="../build"
 
 if [ "x${GOBIN}" == "x" ]; then
   echo "Set GOBIN go environment variable and add it to PATH"

@@ -2,6 +2,8 @@
 # Copyright (C) Huawei Technologies Co., Ltd. 2026. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+set -eu
+
 source helper/bm-generator-lib.sh
 
 : ${DIR_PROG:="./extracted"}
@@ -37,8 +39,12 @@ if [ ! -d "${DIR_SYZ_SRC}" ]; then
 fi
 
 mkdir -p "${DIR_OUT}"
-DIR_OUT_ABS="`readlink -e ${DIR_OUT}`"
-DIR_PROG_ABS="`readlink -e ${DIR_PROG}`"
+DIR_OUT_ABS="$(readlink -e "${DIR_OUT}")"
+if [ -z "$(find "${DIR_OUT_ABS}" -maxdepth 0 -type d -empty 2>/dev/null)" ]; then
+  echo "Directory for reduction output is not empty: ${DIR_OUT_ABS}" >&2
+  exit 1
+fi
+DIR_PROG_ABS="$(readlink -e "${DIR_PROG}")"
 
 if ! find "${DIR_PROG_ABS}" -type f -name '*.prog' -print -quit | grep -q .; then
   echo "No syzkaller programs found in ${DIR_PROG_ABS}." >&2

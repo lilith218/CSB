@@ -137,10 +137,10 @@ cd bm-generator/
 ./08_select.sh
 ```
 
-`01_build.sh` configures a missing CSB build directory automatically. Set
-`DIR_BUILD` to use a build directory other than `../build`. Parsing, extraction,
-reduction, and multidiff stop with an error when the preceding stage produces no `.prog`
-files, so a failed conversion cannot silently create an empty benchmark set.
+`01_build.sh` configures the standard `../build` directory automatically.
+Parsing, extraction, reduction, and multidiff stop with an error when the
+preceding stage produces no `.prog` files, so a failed conversion cannot
+silently create an empty benchmark set.
 
 Reduction and multidiff are required pipeline stages. `05_multidiff.sh` consumes
 `./reduced` and writes the selected programs to `./multidiff`; `06_prepare.sh`
@@ -252,24 +252,19 @@ The output of the script is a list of benchmark names that are distinct from eac
 
 ## Excluded syscalls for bm-generator
 
-The following list documents syscall support policy for calls that were historically
-dropped during [syzlang][] program generation.
+The following syscalls or syscall variants are excluded during [syzlang][]
+program generation.
 
 |Syscall|Reason|
 |---|---|
 |clone|Multithreaded tests are not supported|
 |execve|Replaces actual benchmark program|
 |arch_prctl|No enabled syzkaller target description in the current generator target|
-|mmap, mprotect, msync, mremap, munmap, madvise|Supported on generated scratch VMAs with bounded length and sanitized flags; `munmap` and `mremap` get setup mappings|
-|futex|Supported as nonblocking `FUTEX_WAKE`, preserving the private flag when present|
-|wait, wait4|Supported as nonblocking `wait4(..., WNOHANG, ...)`|
-|rt_sigprocmask, rt_sigtimedwait|Supported with generated signal sets and nonblocking zero timeout for timed waits|
 |rt_sigreturn, rt_sigqueueinfo, rt_sigsuspend|Not supported: these require signal-frame state, deliver signals, or block|
 |rt_sigaction|Function pointers are not recovered by strace|
-|set_robust_list, set_tid_address|Supported with generated valid pointers|
-|io_setup, io_getevents, io_* |AOI syscalls are paired by resources passed in memory pointers (io_ctx), not supported yet.|
-|write|Supported, but if used on file descriptor 1 or 2 (stdout, stderr) these are dropped to avoid output parsing issues|
-|read|Supported, but if used on file descriptor 0 (stdin) these are dropped to avoid blocking|
+|io_setup, io_getevents, io_*|AIO syscalls are paired by resources passed in memory pointers (`io_ctx`), which are not supported yet|
+|write on file descriptor 1 or 2|Writes to stdout and stderr are dropped to avoid output parsing issues|
+|read on file descriptor 0|Reads from stdin are dropped to avoid blocking|
 
 
 ## Generating JSON files
