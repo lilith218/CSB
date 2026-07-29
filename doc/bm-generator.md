@@ -137,7 +137,6 @@ cd bm-generator/
 ./08_select.sh
 ```
 
-`01_build.sh` configures the standard `../build` directory automatically.
 Parsing, extraction, reduction, and multidiff stop with an error when the
 preceding stage produces no `.prog` files, so a failed conversion cannot
 silently create an empty benchmark set.
