@@ -9,8 +9,12 @@ and this project partially comply with [Semantic Versioning](https://semver.org/
 
 ### Added
 
+- Bubblewrap as an execution environment, including configurable arguments and dedicated external benchmark scenarios.
+
 ### Changed
 
+- improved final HTML report layout
+- upgrade benchkit to v0.0.2.
 - updated bm-generator
   - supporting additional syscalls:
     `clone`, `clone3`, `fork`, `vfork`,  `madvise`, `mmap`, `mprotect`,
@@ -19,8 +23,10 @@ and this project partially comply with [Semantic Versioning](https://semver.org/
   - with reduce and multidiff stages, reducing program size, and filtering out
     similar and duplicate programs respectively.
 
-
 ### Fix
+
+- Fix UnixBench, Sysbench, and RocksDB adapters.
+- Fix coexistence of perf and perf lock, and sanitize conflicting perf arguments
 
 ## [0.3.0] - 2026-07-03
 
