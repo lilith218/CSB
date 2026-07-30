@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project partially comply with [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - unreleased
+
+### Added
+
+### Changed
+
+- updated bm-generator
+  - supporting additional syscalls:
+    `clone`, `clone3`, `fork`, `vfork`,  `madvise`, `mmap`, `mprotect`,
+    `mremap`, `msync`, `munmap`, `futex`, `rt_sigprocmask`, `rt_sigtimedwait`,
+    `wait`, and `wait4`
+  - with reduce and multidiff stages, reducing program size, and filtering out
+    similar and duplicate programs respectively.
+
+
+### Fix
+
 ## [0.3.0] - 2026-07-03
 
 ### Added
