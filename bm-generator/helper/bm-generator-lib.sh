@@ -60,6 +60,43 @@ prog_target_arch() {
     normalize_syz_arch "${arch}"
 }
 
+prog_targets_match() {
+    expected_os="$1"
+    expected_arch="$2"
+    shift 2
+    fallback_os="${TRACE_OS:-linux}"
+    fallback_arch="${TRACE_ARCH:-$(normalize_syz_arch "$(uname -m)")}"
+    # Check every input in one process. Starting sed/head per file dominates
+    # large input sets.
+    awk -v expected_os="${expected_os}" -v expected_arch="${expected_arch}" \
+        -v fallback_os="${fallback_os}" -v fallback_arch="${fallback_arch}" '
+      function normalize(arch) {
+        if (arch == "x86_64") return "amd64"
+        if (arch == "aarch64") return "arm64"
+        return arch
+      }
+      function validate(    actual_os, actual_arch) {
+        actual_os = os != "" ? os : fallback_os
+        actual_arch = normalize(arch != "" ? arch : fallback_arch)
+        if (arch == "")
+          printf "WARNING: %s has no csb.trace.arch metadata; using %s\n", current_file, actual_arch > "/dev/stderr"
+        pending = 0
+        if (actual_os != expected_os || actual_arch != expected_arch)
+          exit 1
+      }
+      FNR == 1 {
+        if (pending) validate()
+        pending = 1
+        current_file = FILENAME
+        os = arch = ""
+      }
+      /^[#[:space:]]*csb\.trace\.os=/   { sub(/^[^=]*=/, ""); os = $0 }
+      /^[#[:space:]]*csb\.trace\.arch=/ { sub(/^[^=]*=/, ""); arch = $0 }
+      os != "" && arch != "" { validate(); nextfile }
+      END { if (pending) validate() }
+    ' "$@"
+}
+
 trace_target_os() {
     trace="$1"
     meta="$(trace_meta_file "${trace}")"

@@ -40,13 +40,10 @@ fi
 
 target_os="$(prog_target_os "${files[0]}")"
 target_arch="$(prog_target_arch "${files[0]}")"
-for file in "${files[@]}"; do
-  if [ "$(prog_target_os "${file}")" != "${target_os}" ] ||
-      [ "$(prog_target_arch "${file}")" != "${target_arch}" ]; then
-    echo "syz-multidiff inputs must use one target OS and architecture." >&2
-    exit 1
-  fi
-done
+if ! prog_targets_match "${target_os}" "${target_arch}" "${files[@]}"; then
+  echo "syz-multidiff inputs must use one target OS and architecture." >&2
+  exit 1
+fi
 
 selection="$(mktemp)"
 trap 'rm -f "${selection}"' EXIT
