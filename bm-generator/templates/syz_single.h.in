@@ -11,6 +11,7 @@
 #include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <linux/openat2.h>
 #include <pthread.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -18,6 +19,7 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/syscall.h>
 #include <sys/types.h>
 
 #define BM_CTX_TID (ctx->tid)
@@ -94,8 +96,12 @@ static void remove_tmp_dir_contents_best_effort_NN_prog(int dirfd) {
   while ((entry = readdir(dp)) != NULL) {
     if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
       continue;
-    int childfd = openat(dirfd, entry->d_name,
-                         O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+    const struct open_how how = {
+        .flags = O_RDONLY | O_DIRECTORY | O_CLOEXEC,
+        .resolve = RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_XDEV,
+    };
+    int childfd =
+        syscall(SYS_openat2, dirfd, entry->d_name, &how, sizeof(how));
     if (childfd >= 0) {
       remove_tmp_dir_contents_best_effort_NN_prog(childfd);
       (void)unlinkat(dirfd, entry->d_name, AT_REMOVEDIR);
