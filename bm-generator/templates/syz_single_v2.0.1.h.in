@@ -84,9 +84,34 @@ static inline void init_subdirs_NN_prog(thread_ctx_t *ctx) {
   }
 }
 
-static void __attribute__((noinline)) remove_tmp_dir_NN_prog(const char *dir);
+static void remove_tmp_dir_best_effort_NN_prog(const char *dir) {
+  DIR *dp = opendir(dir);
+  if (dp == NULL) {
+    (void)rmdir(dir);
+    return;
+  }
+  struct dirent *entry = NULL;
+  while ((entry = readdir(dp)) != NULL) {
+    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+      continue;
+    char path[FILENAME_MAX];
+    int len = snprintf(path, sizeof(path), "%s/%s", dir, entry->d_name);
+    if (len < 0 || (size_t)len >= sizeof(path))
+      continue;
+    struct stat st;
+    if (lstat(path, &st) != 0)
+      continue;
+    if (S_ISDIR(st.st_mode))
+      remove_tmp_dir_best_effort_NN_prog(path);
+    else
+      (void)unlink(path);
+  }
+  (void)closedir(dp);
+  (void)rmdir(dir);
+}
+
 static inline void rm_tmpdir_NN_prog(thread_ctx_t *ctx) {
-  remove_tmp_dir_NN_prog(ctx->tmpdir_NN_prog);
+  remove_tmp_dir_best_effort_NN_prog(ctx->tmpdir_NN_prog);
 }
 $_end();
 
