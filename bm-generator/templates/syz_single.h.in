@@ -11,6 +11,7 @@
 #include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <linux/openat2.h>
 #include <pthread.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -18,6 +19,7 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/syscall.h>
 #include <sys/types.h>
 
 #define BM_CTX_TID (ctx->tid)
@@ -84,9 +86,38 @@ static inline void init_subdirs_NN_prog(thread_ctx_t *ctx) {
   }
 }
 
-static void __attribute__((noinline)) remove_tmp_dir_NN_prog(const char *dir);
+static void remove_tmp_dir_contents_best_effort_NN_prog(int dirfd) {
+  DIR *dp = fdopendir(dirfd);
+  if (dp == NULL) {
+    (void)close(dirfd);
+    return;
+  }
+  struct dirent *entry = NULL;
+  while ((entry = readdir(dp)) != NULL) {
+    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+      continue;
+    const struct open_how how = {
+        .flags = O_RDONLY | O_DIRECTORY | O_CLOEXEC,
+        .resolve = RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS | RESOLVE_NO_XDEV,
+    };
+    int childfd =
+        syscall(SYS_openat2, dirfd, entry->d_name, &how, sizeof(how));
+    if (childfd >= 0) {
+      remove_tmp_dir_contents_best_effort_NN_prog(childfd);
+      (void)unlinkat(dirfd, entry->d_name, AT_REMOVEDIR);
+    } else {
+      (void)unlinkat(dirfd, entry->d_name, 0);
+    }
+  }
+  (void)closedir(dp);
+}
+
 static inline void rm_tmpdir_NN_prog(thread_ctx_t *ctx) {
-  remove_tmp_dir_NN_prog(ctx->tmpdir_NN_prog);
+  int cleanupfd = openat(ctx->dirfd_NN_prog, ".",
+                         O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+  if (cleanupfd >= 0)
+    remove_tmp_dir_contents_best_effort_NN_prog(cleanupfd);
+  (void)rmdir(ctx->tmpdir_NN_prog);
 }
 $_end();
 
@@ -233,6 +264,13 @@ static inline void bm_target_dereg(thread_ctx_t *ctx, size_t tid) {
   $_begin(NN = [[1; 2]]);
   // do the per test dereg
   bm_target_dereg_NN_prog(ctx);
+
+  rm_tmpdir_NN_prog(ctx);
+  close(ctx->dirfd_NN_prog);
+  ctx->dirfd_NN_prog = -1;
+
+  munmap((void *)ctx->mmap_offsets_NN_prog, MMAP_LENGTH);
+  ctx->mmap_offsets_NN_prog = 0;
 
   free(ctx->tmpdir_NN_prog);
   // free(ctx->connect_arg_NN_prog);
