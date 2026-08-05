@@ -8,6 +8,7 @@ It consists of the following components:
 - [bm-generator][] extends [syzkaller] and uses [tmplr][] to generate system calls based benchmarks
 - [bench][] a set of manual and auto-generated C benchmarks
 
+_Disclaimer: The auto-generated app-syscall-simulating benchmarks in this repository are subject to changes, additions, and removals across releases, as the evolving bm-generator adds support for new syscalls._
 
 ```mermaid
 flowchart LR
