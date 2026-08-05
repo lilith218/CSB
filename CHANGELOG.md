@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project partially comply with [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0] - unreleased
+## [0.4.0] - 2026-08-05
 
 ### Added
 
@@ -22,6 +22,7 @@ and this project partially comply with [Semantic Versioning](https://semver.org/
     `wait`, and `wait4`
   - with reduce and multidiff stages, reducing program size, and filtering out
     similar and duplicate programs respectively.
+- updated auto-generated rocksdb benchmarks.
 
 ### Fix
 
